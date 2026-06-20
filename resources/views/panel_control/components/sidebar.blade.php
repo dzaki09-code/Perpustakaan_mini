@@ -25,6 +25,18 @@
       </a>
     </li>
 
+    <!-- Manajemen Buku -->
+    <li class="menu-header small text-uppercase">
+      <span class="menu-header-text">Manajemen</span>
+    </li>
+
+    <li class="menu-item {{ Route::is('books.*') ? 'active open' : '' }}">
+      <a href="{{ route('books.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-book-open"></i>
+        <div data-i18n="Buku">Buku</div>
+      </a>
+    </li>
+
     <!-- Account Settings -->
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">

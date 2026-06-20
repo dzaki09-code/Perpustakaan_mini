@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\PanelControl\BookController;
 use App\Http\Controllers\PanelControl\DashboardController;
 
 
@@ -14,3 +15,6 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('signout');
 
 // Routing untuk Dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+// Routing untuk Manajemen Buku
+Route::resource('books', BookController::class)->except(['show']);

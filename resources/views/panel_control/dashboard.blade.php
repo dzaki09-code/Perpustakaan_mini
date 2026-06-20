@@ -34,7 +34,7 @@
           <div class="card">
             <div class="card-body">
               <span class="fw-semibold d-block mb-1">Buku</span>
-              <h3 class="card-title mb-2">0</h3>
+              <h3 class="card-title mb-2">{{ $bookCount }}</h3>
               <small class="text-muted">Total data</small>
             </div>
           </div>
@@ -43,7 +43,7 @@
           <div class="card">
             <div class="card-body">
               <span class="fw-semibold d-block mb-1">Anggota</span>
-              <h3 class="card-title mb-2">0</h3>
+              <h3 class="card-title mb-2">{{ $userCount }}</h3>
               <small class="text-muted">Total data</small>
             </div>
           </div>

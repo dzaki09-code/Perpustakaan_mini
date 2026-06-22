@@ -17,4 +17,5 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('signout');
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Routing untuk Manajemen Buku
+Route::get('/books/open-library/search', [BookController::class, 'openLibrarySearch'])->name('books.open_library.search');
 Route::resource('books', BookController::class)->except(['show']);

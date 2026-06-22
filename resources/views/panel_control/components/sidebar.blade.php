@@ -1,3 +1,8 @@
+@php
+  $currentUser = auth()->user();
+  $isAdmin = $currentUser?->isAdmin() ?? false;
+@endphp
+
 <!-- Sidebar Menu -->
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
   <!-- Brand Logo -->
@@ -26,84 +31,104 @@
     </li>
 
     <!-- Manajemen Buku -->
-    <li class="menu-header small text-uppercase">
-      <span class="menu-header-text">Manajemen</span>
-    </li>
-
     <li class="menu-item {{ Route::is('books.*') ? 'active open' : '' }}">
-      <a href="{{ route('books.index') }}" class="menu-link">
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-book-open"></i>
-        <div data-i18n="Buku">Buku</div>
+        <div data-i18n="Manajemen Buku">Manajemen Buku</div>
       </a>
+      <ul class="menu-sub">
+        <li class="menu-item {{ Route::is('books.index') ? 'active' : '' }}">
+          <a href="{{ route('books.index') }}" class="menu-link">
+            <div data-i18n="Daftar Buku">Daftar Buku</div>
+          </a>
+        </li>
+        @if ($isAdmin)
+          <li class="menu-item {{ Route::is('books.create') ? 'active' : '' }}">
+            <a href="{{ route('books.create') }}" class="menu-link">
+              <div data-i18n="Tambah Buku">Tambah Buku</div>
+            </a>
+          </li>
+        @endif
+      </ul>
     </li>
 
-    <!-- Account Settings -->
+    @if ($isAdmin)
+      <!-- Peminjaman -->
+      <li class="menu-item">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <i class="menu-icon tf-icons bx bx-transfer"></i>
+          <div data-i18n="Peminjaman">Peminjaman</div>
+        </a>
+        <ul class="menu-sub">
+          <li class="menu-item">
+            <a href="#" class="menu-link">
+              <div data-i18n="Daftar Peminjaman">Daftar Peminjaman</div>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="#" class="menu-link">
+              <div data-i18n="Tambah Peminjaman">Tambah Peminjaman</div>
+            </a>
+          </li>
+          <li class="menu-item">
+            <a href="#" class="menu-link">
+              <div data-i18n="Pengembalian">Pengembalian</div>
+            </a>
+          </li>
+        </ul>
+      </li>
+    @endif
+
+    <!-- Riwayat -->
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-dock-top"></i>
-        <div data-i18n="Account Settings">Account Settings</div>
+        <i class="menu-icon tf-icons bx bx-history"></i>
+        <div data-i18n="Riwayat">Riwayat</div>
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
           <a href="#" class="menu-link">
-            <div data-i18n="Account">Account</div>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a href="#" class="menu-link">
-            <div data-i18n="Notifications">Notifications</div>
+            <div data-i18n="Riwayat Peminjaman">Riwayat Peminjaman</div>
           </a>
         </li>
       </ul>
     </li>
 
-    <!-- Components Section -->
-    <li class="menu-header small text-uppercase">
-      <span class="menu-header-text">Components</span>
-    </li>
+    @if ($isAdmin)
+      <!-- Pengguna -->
+      <li class="menu-item {{ Route::is('users.*') ? 'active open' : '' }}">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
+          <i class="menu-icon tf-icons bx bx-user"></i>
+          <div data-i18n="Pengguna">Pengguna</div>
+        </a>
+        <ul class="menu-sub">
+          <li class="menu-item {{ Route::is('users.index') ? 'active' : '' }}">
+            <a href="{{ route('users.index') }}" class="menu-link">
+              <div data-i18n="Daftar Pengguna">Daftar Pengguna</div>
+            </a>
+          </li>
+        </ul>
+      </li>
+    @endif
 
-    <!-- Cards -->
+    <!-- Akun -->
     <li class="menu-item">
-      <a href="#" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-collection"></i>
-        <div data-i18n="Cards">Cards</div>
-      </a>
-    </li>
-
-    <!-- User Interface -->
-    <li class="menu-item">
-      <a href="javascript:void(0)" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-box"></i>
-        <div data-i18n="User interface">User interface</div>
+      <a href="javascript:void(0);" class="menu-link menu-toggle">
+        <i class="menu-icon tf-icons bx bx-user-circle"></i>
+        <div data-i18n="Akun">Akun</div>
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
           <a href="#" class="menu-link">
-            <div data-i18n="Buttons">Buttons</div>
+            <div data-i18n="Profil">Profil</div>
           </a>
         </li>
         <li class="menu-item">
-          <a href="#" class="menu-link">
-            <div data-i18n="Modals">Modals</div>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a href="#" class="menu-link">
-            <div data-i18n="Alerts">Alerts</div>
+          <a href="{{ route('signout') }}" class="menu-link">
+            <div data-i18n="Logout">Logout</div>
           </a>
         </li>
       </ul>
-    </li>
-
-    <!-- Misc Section -->
-    <li class="menu-header small text-uppercase">
-      <span class="menu-header-text">Misc</span>
-    </li>
-    <li class="menu-item">
-      <a href="https://github.com" target="_blank" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-support"></i>
-        <div data-i18n="Support">Support</div>
-      </a>
     </li>
   </ul>
 </aside>

@@ -3,14 +3,22 @@
 @section('title', 'Manajemen Buku | Perpustakaan')
 
 @section('content')
+  @php
+    $isAdmin = auth()->user()?->isAdmin() ?? false;
+  @endphp
+
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-      <h4 class="mb-1">Manajemen Buku</h4>
-      <p class="text-muted mb-0">Kelola data koleksi buku perpustakaan mini.</p>
+      <h4 class="mb-1">{{ $isAdmin ? 'Manajemen Buku' : 'Daftar Buku' }}</h4>
+      <p class="text-muted mb-0">
+        {{ $isAdmin ? 'Kelola data koleksi buku perpustakaan mini.' : 'Lihat koleksi buku yang tersedia di perpustakaan.' }}
+      </p>
     </div>
-    <a href="{{ route('books.create') }}" class="btn btn-primary">
-      <i class="bx bx-plus me-1"></i>Tambah Buku
-    </a>
+    @if ($isAdmin)
+      <a href="{{ route('books.create') }}" class="btn btn-primary">
+        <i class="bx bx-plus me-1"></i>Tambah Buku
+      </a>
+    @endif
   </div>
 
   @if (session('success'))
@@ -56,7 +64,9 @@
             <th>Tahun</th>
             <th>Stok</th>
             <th>ISBN</th>
-            <th class="text-end">Aksi</th>
+            @if ($isAdmin)
+              <th class="text-end">Aksi</th>
+            @endif
           </tr>
         </thead>
         <tbody class="table-border-bottom-0">
@@ -72,20 +82,22 @@
               <td>{{ $book->publication_year ?: '-' }}</td>
               <td>{{ $book->stock }}</td>
               <td>{{ $book->isbn ?: '-' }}</td>
-              <td>
-                <div class="d-flex justify-content-end gap-2">
-                  <a href="{{ route('books.edit', $book) }}" class="btn btn-sm btn-warning">Edit</a>
-                  <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('Hapus data buku ini?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                  </form>
-                </div>
-              </td>
+              @if ($isAdmin)
+                <td>
+                  <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ route('books.edit', $book) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('Hapus data buku ini?')">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                    </form>
+                  </div>
+                </td>
+              @endif
             </tr>
           @empty
             <tr>
-              <td colspan="8" class="text-center py-4 text-muted">Belum ada data buku.</td>
+              <td colspan="{{ $isAdmin ? 8 : 7 }}" class="text-center py-4 text-muted">Belum ada data buku.</td>
             </tr>
           @endforelse
         </tbody>

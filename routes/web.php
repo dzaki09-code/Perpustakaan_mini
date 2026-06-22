@@ -4,18 +4,34 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PanelControl\BookController;
 use App\Http\Controllers\PanelControl\DashboardController;
+use App\Http\Controllers\PanelControl\UserController;
 
 
-// Routing untuk Auth
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/register', [AuthController::class, 'register_process'])->name('signup');
 Route::post('/login', [AuthController::class, 'login'])->name('signin');
-Route::get('/logout', [AuthController::class, 'logout'])->name('signout');
 
-// Routing untuk Dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::middleware('auth')->group(function () {
+    Route::get('/logout', [AuthController::class, 'logout'])->name('signout');
 
-// Routing untuk Manajemen Buku
-Route::get('/books/open-library/search', [BookController::class, 'openLibrarySearch'])->name('books.open_library.search');
-Route::resource('books', BookController::class)->except(['show']);
+    // Routing untuk Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Semua user yang login boleh melihat daftar buku.
+    Route::get('/books', [BookController::class, 'index'])->name('books.index');
+
+    // Admin/petugas mengelola data buku.
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
+        Route::post('/books', [BookController::class, 'store'])->name('books.store');
+        Route::get('/books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
+        Route::put('/books/{book}', [BookController::class, 'update'])->name('books.update');
+        Route::patch('/books/{book}', [BookController::class, 'update'])->name('books.update');
+        Route::delete('/books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
+        Route::get('/books/open-library/search', [BookController::class, 'openLibrarySearch'])->name('books.open_library.search');
+
+        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::patch('/users/{user}/status', [UserController::class, 'updateStatus'])->name('users.update_status');
+    });
+});

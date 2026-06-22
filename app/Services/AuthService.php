@@ -15,7 +15,8 @@ class AuthService
         $user = User::create([
             'name'      => $data['name'],
             'email'     => $data['email'],
-            'password'  => Hash::make($data['password'])
+            'password'  => Hash::make($data['password']),
+            'role'      => User::ROLE_USER,
         ]);
 
         if ($user) {
@@ -29,6 +30,11 @@ class AuthService
     {
         try {
             if (Auth::attempt(['email' => $data['email'],'password' => $data['password']])) {
+                if (! Auth::user()->isActive()) {
+                    Auth::logout();
+                    return false;
+                }
+
                 Session::put('logged_in', true);
                 return true;
             };

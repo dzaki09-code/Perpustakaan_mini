@@ -6,6 +6,17 @@ use App\Http\Controllers\PanelControl\BookController;
 use App\Http\Controllers\PanelControl\DashboardController;
 use App\Http\Controllers\PanelControl\UserController;
 use App\Http\Controllers\PanelControl\LoanController;
+use Illuminate\Support\Facades\App;
+
+Route::get('lang/{locale}', function ($locale) {
+    if (in_array($locale, ['en', 'id'])) {
+        session(['locale' => $locale]);
+        App::setLocale($locale);
+        // Also persist locale in a cookie as a fallback when sessions aren't persisted
+        return redirect()->back()->withCookie(cookie()->forever('locale', $locale));
+    }
+    return redirect()->back();
+});
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');

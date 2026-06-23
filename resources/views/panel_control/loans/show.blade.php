@@ -1,6 +1,6 @@
 @extends('panel_control.components.main')
 
-@section('title', 'Detail Peminjaman | Perpustakaan')
+@section('title', __('loanDetail') . ' | ' . __('dashboard'))
 
 @section('content')
   @php
@@ -9,11 +9,11 @@
 
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-      <h4 class="mb-1">Detail Transaksi Peminjaman</h4>
-      <p class="text-muted mb-0">Informasi lengkap mengenai status pengajuan dan detail sirkulasi buku.</p>
+      <h4 class="mb-1">{{ __('loanDetail') }}</h4>
+      <p class="text-muted mb-0">{{ __('loanTransactionDetail') }}</p>
     </div>
     <a href="{{ route('loans.index') }}" class="btn btn-outline-secondary">
-      <i class="bx bx-chevron-left me-1"></i>Kembali
+      <i class="bx bx-chevron-left me-1"></i>{{ __('back') }}
     </a>
   </div>
 
@@ -37,7 +37,7 @@
       <!-- Card Informasi Transaksi -->
       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center pb-2">
-          <h5 class="card-title mb-0">Detail Peminjaman</h5>
+          <h5 class="card-title mb-0">{{ __('loanDetail') }}</h5>
           @php
             $statusBadge = match($loan->status) {
               'pending' => 'bg-label-warning',
@@ -47,10 +47,10 @@
               default => 'bg-label-secondary'
             };
             $statusLabel = match($loan->status) {
-              'pending' => 'Menunggu Persetujuan',
-              'approved' => 'Sedang Dipinjam',
-              'returned' => 'Sudah Dikembalikan',
-              'rejected' => 'Ditolak',
+              'pending' => __('pending'),
+              'approved' => __('approved'),
+              'returned' => __('returned'),
+              'rejected' => __('rejected'),
               default => $loan->status
             };
           @endphp
@@ -59,14 +59,14 @@
         <div class="card-body">
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label text-muted small uppercase">Tanggal Pinjam</label>
+              <label class="form-label text-muted small uppercase">{{ __('borrowDate') }}</label>
               <p class="fw-semibold mb-0 fs-5">
                 <i class="bx bx-calendar me-1 text-primary"></i>
                 {{ \Carbon\Carbon::parse($loan->borrow_date)->format('d M Y') }}
               </p>
             </div>
             <div class="col-md-6">
-              <label class="form-label text-muted small uppercase">Tanggal Pengembalian</label>
+              <label class="form-label text-muted small uppercase">{{ __('returnDate') }}</label>
               <p class="fw-semibold mb-0 fs-5">
                 <i class="bx bx-calendar-check me-1 text-success"></i>
                 @if ($loan->return_date)
@@ -83,7 +83,7 @@
       <!-- Card Detail Buku -->
       <div class="card">
         <div class="card-header pb-2">
-          <h5 class="card-title mb-0">Informasi Buku</h5>
+          <h5 class="card-title mb-0">{{ __('bookDetail') }}</h5>
         </div>
         <div class="card-body">
           <div class="d-flex align-items-start gap-4 mb-4">
@@ -92,8 +92,8 @@
             </div>
             <div>
               <h4 class="mb-1 text-primary">{{ $loan->book?->title }}</h4>
-              <p class="mb-2 text-muted fs-6">Ditulis oleh <strong class="text-dark">{{ $loan->book?->author }}</strong></p>
-              <span class="badge bg-label-primary text-capitalize">{{ $loan->book?->category ?: 'Lainnya' }}</span>
+              <p class="mb-2 text-muted fs-6">{{ __('author') }}: <strong class="text-dark">{{ $loan->book?->author }}</strong></p>
+              <span class="badge bg-label-primary text-capitalize">{{ $loan->book?->category ?: __('other') }}</span>
             </div>
           </div>
 
@@ -101,19 +101,19 @@
             <table class="table table-borderless">
               <tbody>
                 <tr>
-                  <th style="width: 180px;" class="pb-2">Penerbit</th>
+                  <th style="width: 180px;" class="pb-2">{{ __('publisher') }}</th>
                   <td class="pb-2">{{ $loan->book?->publisher ?: '-' }}</td>
                 </tr>
                 <tr>
-                  <th class="pb-2">Tahun Terbit</th>
+                  <th class="pb-2">{{ __('year') }}</th>
                   <td class="pb-2">{{ $loan->book?->publication_year ?: '-' }}</td>
                 </tr>
                 <tr>
-                  <th class="pb-2">ISBN / Kode Gutenberg</th>
+                  <th class="pb-2">{{ __('isbn') }}</th>
                   <td class="pb-2"><code>{{ $loan->book?->isbn ?: '-' }}</code></td>
                 </tr>
                 <tr>
-                  <th class="pb-2">Deskripsi</th>
+                  <th class="pb-2">{{ __('description') }}</th>
                   <td class="pb-2">{{ $loan->book?->description ?: '-' }}</td>
                 </tr>
               </tbody>
@@ -129,7 +129,7 @@
         <!-- Card Peminjam (Hanya Admin) -->
         <div class="card mb-4">
           <div class="card-header pb-2">
-            <h5 class="card-title mb-0">Detail Peminjam</h5>
+            <h5 class="card-title mb-0">{{ __('borrowerDetail') }}</h5>
           </div>
           <div class="card-body">
             <div class="d-flex align-items-center mb-3">
@@ -142,9 +142,9 @@
               </div>
             </div>
             <hr class="my-3">
-            <p class="mb-2 small"><strong class="text-muted text-uppercase">Role:</strong> Anggota</p>
+            <p class="mb-2 small"><strong class="text-muted text-uppercase">{{ __('tableRole') }}:</strong> {{ $loan->user?->isAdmin() ? __('admin') : __('member') }}</p>
             <p class="mb-0 small">
-              <strong class="text-muted text-uppercase">Status Akun:</strong> 
+              <strong class="text-muted text-uppercase">{{ __('tableStatus') }}:</strong> 
               <span class="badge bg-{{ $loan->user?->statusBadgeColor() }}">{{ $loan->user?->statusLabel() }}</span>
             </p>
           </div>
@@ -154,22 +154,22 @@
       <!-- Card Ringkasan Baca Digital & Aksi -->
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title mb-3">Aksi &amp; E-Book</h5>
+          <h5 class="card-title mb-3">{{ __('readDigitalBook') }}</h5>
           
           <!-- Tombol Baca E-Book -->
           @if ($loan->book?->read_url)
             @if ($isAdmin || $loan->status === 'approved')
               <a href="{{ $loan->book->read_url }}" target="_blank" class="btn btn-primary w-100 mb-3">
-                <i class="bx bx-book-open me-1"></i> Baca Buku Online
+                <i class="bx bx-book-open me-1"></i> {{ __('readBookOnline') }}
               </a>
             @else
-              <button class="btn btn-outline-secondary w-100 mb-3" disabled title="Tersedia setelah peminjaman disetujui">
-                <i class="bx bx-lock-alt me-1"></i> Baca Online (Terkunci)
+              <button class="btn btn-outline-secondary w-100 mb-3" disabled title="{{ __('getApprovalToRead') }}">
+                <i class="bx bx-lock-alt me-1"></i> {{ __('readOnlineLocked') }}
               </button>
-              <small class="text-muted d-block text-center mb-3">Dapatkan persetujuan Admin untuk membaca.</small>
+              <small class="text-muted d-block text-center mb-3">{{ __('getApprovalToRead') }}</small>
             @endif
           @else
-            <p class="text-muted small text-center mb-3">Tautan baca digital tidak tersedia untuk buku ini.</p>
+            <p class="text-muted small text-center mb-3">{{ __('digitalLinkNotAvailable') }}</p>
           @endif
 
           <!-- Tombol Tindakan Admin -->
@@ -177,31 +177,31 @@
             <hr class="my-3">
             @if ($loan->status === 'pending')
               <div class="d-flex flex-column gap-2">
-                <form action="{{ route('loans.approve', $loan) }}" method="POST" onsubmit="return confirm('Setujui peminjaman ini?')">
+                <form action="{{ route('loans.approve', $loan) }}" method="POST" onsubmit="return confirm('{{ __('approveConfirm') }}')">
                   @csrf
                   @method('PATCH')
                   <button type="submit" class="btn btn-success w-100">
-                    <i class="bx bx-check me-1"></i> Setujui Peminjaman
+                    <i class="bx bx-check me-1"></i> {{ __('approveLoan') }}
                   </button>
                 </form>
-                <form action="{{ route('loans.reject', $loan) }}" method="POST" onsubmit="return confirm('Tolak peminjaman ini?')">
+                <form action="{{ route('loans.reject', $loan) }}" method="POST" onsubmit="return confirm('{{ __('rejectConfirm') }}')">
                   @csrf
                   @method('PATCH')
                   <button type="submit" class="btn btn-danger w-100">
-                    <i class="bx bx-x me-1"></i> Tolak Pengajuan
+                    <i class="bx bx-x me-1"></i> {{ __('rejectLoan') }}
                   </button>
                 </form>
               </div>
             @elseif ($loan->status === 'approved')
-              <form action="{{ route('loans.return', $loan) }}" method="POST" onsubmit="return confirm('Konfirmasi pengembalian buku ini?')">
+              <form action="{{ route('loans.return', $loan) }}" method="POST" onsubmit="return confirm('{{ __('borrowConfirm') }}')">
                 @csrf
                 @method('PATCH')
                 <button type="submit" class="btn btn-info w-100">
-                  <i class="bx bx-undo me-1"></i> Konfirmasi Pengembalian
+                  <i class="bx bx-undo me-1"></i> {{ __('confirmReturn') }}
                 </button>
               </form>
             @else
-              <p class="text-muted text-center mb-0 small">Transaksi ini telah selesai.</p>
+              <p class="text-muted text-center mb-0 small">{{ __('transactionCompleted') }}</p>
             @endif
           @endif
         </div>

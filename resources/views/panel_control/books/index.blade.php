@@ -1,6 +1,6 @@
 @extends('panel_control.components.main')
 
-@section('title', 'Manajemen Buku | Perpustakaan')
+@section('title', __('booksList') . ' | ' . __('dashboard'))
 
 @section('content')
   @php
@@ -11,14 +11,14 @@
 
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-      <h4 class="mb-1">{{ $isAdmin ? 'Manajemen Buku' : 'Daftar Buku' }}</h4>
+      <h4 class="mb-1">{{ $isAdmin ? __('managementBooks') : __('booksList') }}</h4>
       <p class="text-muted mb-0">
-        {{ $isAdmin ? 'Kelola data koleksi buku perpustakaan mini.' : 'Lihat koleksi buku yang tersedia di perpustakaan.' }}
+        {{ $isAdmin ? __('booksAdminSubtitle') : __('booksVisitorSubtitle') }}
       </p>
     </div>
     @if ($isAdmin)
       <a href="{{ route('books.create') }}" class="btn btn-primary">
-        <i class="bx bx-plus me-1"></i>Tambah Buku
+        <i class="bx bx-plus me-1"></i>{{ __('addBook') }}
       </a>
     @endif
   </div>
@@ -34,21 +34,21 @@
     <div class="card-body">
       <form method="GET" action="{{ route('books.index') }}" class="row g-3 align-items-end">
         <div class="col-md-9">
-          <label for="searchBook" class="form-label">Cari buku</label>
+          <label for="searchBook" class="form-label">{{ __('searchBook') }}</label>
           <input
             type="text"
             id="searchBook"
             name="q"
             class="form-control"
-            placeholder="Judul, penulis, kategori, atau ISBN"
+            placeholder="{{ __('searchBookPlaceholder') }}"
             value="{{ request('q') }}"
           />
         </div>
         <div class="col-md-3 d-grid gap-2 d-md-flex justify-content-md-end">
           <button type="submit" class="btn btn-outline-primary">
-            <i class="bx bx-search me-1"></i>Cari
+            <i class="bx bx-search me-1"></i>{{ __('search') }}
           </button>
-          <a href="{{ route('books.index') }}" class="btn btn-outline-secondary">Reset</a>
+          <a href="{{ route('books.index') }}" class="btn btn-outline-secondary">{{ __('reset') }}</a>
         </div>
       </form>
     </div>
@@ -59,15 +59,15 @@
       <table class="table">
         <thead>
           <tr>
-            <th>No</th>
-            <th>Judul</th>
-            <th>Penulis</th>
-            <th>Kategori</th>
-            <th>Tahun</th>
-            <th>Stok</th>
-            <th>ISBN</th>
+            <th>{{ __('tableNo') }}</th>
+            <th>{{ __('title') }}</th>
+            <th>{{ __('author') }}</th>
+            <th>{{ __('category') }}</th>
+            <th>{{ __('year') }}</th>
+            <th>{{ __('stock') }}</th>
+            <th>{{ __('isbn') }}</th>
             @if ($isAdmin || $isUser)
-              <th class="text-end">Aksi</th>
+              <th class="text-end">{{ __('actions') }}</th>
             @endif
           </tr>
         </thead>
@@ -91,27 +91,27 @@
                         <form action="{{ route('loans.borrow', $book) }}" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-primary btn-sm">
-                                Pinjam
+                                {{ __('borrow') }}
                             </button>
                         </form>
                     @endif
 
                     @if ($isAdmin)
                         <a href="{{ route('books.show', $book) }}" class="btn btn-sm btn-info">
-                            Detail
+                            {{ __('detail') }}
                         </a>
 
                         <a href="{{ route('books.edit', $book) }}" class="btn btn-sm btn-warning">
-                            Edit
+                            {{ __('edit') }}
                         </a>
 
                         <form action="{{ route('books.destroy', $book) }}"
                             method="POST"
-                            onsubmit="return confirm('Hapus data buku ini?')">
+                            onsubmit="return confirm('{{ __('deleteConfirmBook') }}')">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm btn-danger">
-                            Hapus
+                            {{ __('delete') }}
                         </button>
                         </form>
                     @endif
@@ -119,13 +119,13 @@
                 </td>
               @else
                 <td>
-                  <a href="{{ route('books.show', $book) }}" class="btn btn-sm btn-info">Detail</a>
+                  <a href="{{ route('books.show', $book) }}" class="btn btn-sm btn-info">{{ __('detail') }}</a>
                 </td>
               @endif
             </tr>
           @empty
             <tr>
-              <td colspan="{{ $isAdmin ? 8 : 7 }}" class="text-center py-4 text-muted">Belum ada data buku.</td>
+              <td colspan="{{ $isAdmin ? 8 : 7 }}" class="text-center py-4 text-muted">{{ __('noDataBooks') }}</td>
             </tr>
           @endforelse
         </tbody>

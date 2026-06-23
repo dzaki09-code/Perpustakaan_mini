@@ -1,6 +1,6 @@
 @extends('panel_control.components.main')
 
-@section('title', 'Dashboard | Perpustakaan')
+@section('title', __('dashboard') . ' | Perpustakaan')
 
 @section('content')
     <!-- Row 1: Welcome Banner & Top Metrics -->
@@ -11,14 +11,12 @@
                 <div class="d-flex align-items-end row h-100">
                     <div class="col-sm-7">
                         <div class="card-body">
-                            <h5 class="card-title text-primary">Selamat Datang Kembali, {{ auth()->user()->name }}! 🎉</h5>
+                            <h5 class="card-title text-primary">{{ __('welcomeBack', ['name' => auth()->user()->name]) }}</h5>
                             <p class="mb-4">
-                                Anda memiliki akses penuh ke panel kontrol sebagai 
-                                <span class="badge bg-label-primary fw-bold text-uppercase">{{ auth()->user()->role === 'admin' ? 'Admin' : 'Anggota' }}</span>. 
-                                Kelola koleksi buku dan pantau data perpustakaan mini dengan mudah.
+                                {{ __('dashboardSubtitle', ['role' => auth()->user()->role === 'admin' ? __('admin') : __('member')]) }}
                             </p>
                             <a href="{{ route('books.index') }}" class="btn btn-sm btn-outline-primary">
-                                <i class="bx bx-book-open me-1"></i>Lihat Koleksi Buku
+                                <i class="bx bx-book-open me-1"></i>{{ __('viewCollection') }}
                             </a>
                         </div>
                     </div>
@@ -49,9 +47,9 @@
                                     </span>
                                 </div>
                             </div>
-                            <span class="fw-semibold d-block mb-1 text-muted">Total Judul</span>
+                            <span class="fw-semibold d-block mb-1 text-muted">{{ __('totalTitles') }}</span>
                             <h3 class="card-title mb-1 fw-bold">{{ $bookCount }}</h3>
-                            <small class="text-primary fw-medium">Judul Buku</small>
+                            <small class="text-primary fw-medium">{{ __('titlesLabel') }}</small>
                         </div>
                     </div>
                 </div>
@@ -65,9 +63,9 @@
                                     </span>
                                 </div>
                             </div>
-                            <span class="fw-semibold d-block mb-1 text-muted">Total Stok</span>
+                            <span class="fw-semibold d-block mb-1 text-muted">{{ __('totalStock') }}</span>
                             <h3 class="card-title mb-1 fw-bold">{{ $totalStock }}</h3>
-                            <small class="text-success fw-medium">Eksemplar</small>
+                            <small class="text-success fw-medium">{{ __('copies') }}</small>
                         </div>
                     </div>
                 </div>
@@ -82,8 +80,8 @@
             <div class="card h-100">
                 <div class="card-header d-flex align-items-center justify-content-between pb-0">
                     <div class="card-title mb-0">
-                        <h5 class="m-0 me-2 fw-semibold">Distribusi Kategori Buku</h5>
-                        <small class="text-muted">Proporsi judul buku berdasarkan kategorinya</small>
+                        <h5 class="m-0 me-2 fw-semibold">{{ __('categoryDistribution') }}</h5>
+                        <small class="text-muted">{{ __('categoryDistributionSubtitle') }}</small>
                     </div>
                 </div>
                 <div class="card-body mt-3">
@@ -92,7 +90,7 @@
                     @else
                         <div class="d-flex flex-column align-items-center justify-content-center py-5 text-muted">
                             <i class="bx bx-pie-chart-alt fs-1 mb-2"></i>
-                            <span>Belum ada data kategori untuk divisualisasikan.</span>
+                            <span>{{ __('noCategoryData') }}</span>
                         </div>
                     @endif
                 </div>
@@ -113,9 +111,9 @@
                                     </span>
                                 </div>
                             </div>
-                            <span class="fw-semibold d-block mb-1 text-muted">Total Pengguna</span>
+                            <span class="fw-semibold d-block mb-1 text-muted">{{ __('totalUsers') }}</span>
                             <h3 class="card-title mb-1 fw-bold">{{ $userCount }}</h3>
-                            <small class="text-info fw-medium">Terdaftar</small>
+                            <small class="text-info fw-medium">{{ __('registered') }}</small>
                         </div>
                     </div>
                 </div>
@@ -130,9 +128,9 @@
                                     </span>
                                 </div>
                             </div>
-                            <span class="fw-semibold d-block mb-1 text-muted">Kategori Unik</span>
+                            <span class="fw-semibold d-block mb-1 text-muted">{{ __('uniqueCategories') }}</span>
                             <h3 class="card-title mb-1 fw-bold">{{ $categoryCount }}</h3>
-                            <small class="text-warning fw-medium">Kategori</small>
+                            <small class="text-warning fw-medium">{{ __('categoriesLabel') }}</small>
                         </div>
                     </div>
                 </div>
@@ -146,18 +144,18 @@
         <div class="{{ auth()->user()->isAdmin() ? 'col-md-6 col-lg-6' : 'col-12' }} mb-4">
             <div class="card h-100">
                 <div class="card-header d-flex align-items-center justify-content-between pb-3">
-                    <h5 class="card-title m-0 me-2 fw-semibold">Buku Terbaru</h5>
+                    <h5 class="card-title m-0 me-2 fw-semibold">{{ __('latestBooks') }}</h5>
                     <a href="{{ route('books.index') }}" class="btn btn-sm btn-outline-primary">
-                        Lihat Semua
+                        {{ __('viewAll') }}
                     </a>
                 </div>
                 <div class="table-responsive text-nowrap">
                     <table class="table table-hover">
                         <thead>
                             <tr class="table-light">
-                                <th>Informasi Buku</th>
-                                <th>Kategori</th>
-                                <th class="text-center">Stok</th>
+                                <th>{{ __('bookInfo') }}</th>
+                                <th>{{ __('category') }}</th>
+                                <th class="text-center">{{ __('stock') }}</th>
                             </tr>
                         </thead>
                         <tbody class="table-border-bottom-0">
@@ -178,14 +176,14 @@
                                     </td>
                                     <td>
                                         <span class="badge bg-label-primary text-capitalize">
-                                            {{ $book->category ?: 'Lainnya' }}
+                                            {{ $book->category ?: __('other') }}
                                         </span>
                                     </td>
                                     <td class="text-center fw-bold">{{ $book->stock }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="text-center py-4 text-muted">Belum ada data buku.</td>
+                                    <td colspan="3" class="text-center py-4 text-muted">{{ __('noDataBooks') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -199,10 +197,10 @@
         <div class="col-md-6 col-lg-6 mb-4">
             <div class="card h-100">
                 <div class="card-header d-flex align-items-center justify-content-between pb-3">
-                    <h5 class="card-title m-0 me-2 fw-semibold">Pengguna Terbaru</h5>
+                    <h5 class="card-title m-0 me-2 fw-semibold">{{ __('latestUsers') }}</h5>
                     @if(auth()->user()->isAdmin())
                         <a href="{{ route('users.index') }}" class="btn btn-sm btn-outline-primary">
-                            Lihat Semua
+                            {{ __('viewAll') }}
                         </a>
                     @endif
                 </div>
@@ -210,9 +208,9 @@
                     <table class="table table-hover">
                         <thead>
                             <tr class="table-light">
-                                <th>Nama Pengguna</th>
-                                <th>Peran</th>
-                                <th>Status</th>
+                                <th>{{ __('userName') }}</th>
+                                <th>{{ __('tableRole') }}</th>
+                                <th>{{ __('tableStatus') }}</th>
                             </tr>
                         </thead>
                         <tbody class="table-border-bottom-0">
@@ -231,7 +229,7 @@
                                     </td>
                                     <td>
                                         <span class="badge bg-label-{{ $user->isAdmin() ? 'danger' : 'info' }} text-capitalize">
-                                            {{ $user->role === 'admin' ? 'Admin' : 'Anggota' }}
+                                            {{ $user->role === 'admin' ? __('admin') : __('member') }}
                                         </span>
                                     </td>
                                     <td>
@@ -242,7 +240,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="text-center py-4 text-muted">Belum ada data pengguna.</td>
+                                    <td colspan="3" class="text-center py-4 text-muted">{{ __('noDataUsers') }}</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -331,7 +329,7 @@
                                         color: '#566a7f',
                                         offsetY: -10,
                                         formatter: function (val) {
-                                            return parseInt(val) + ' Buku';
+                                            return parseInt(val) + ' {{ __('titlesUnit') }}';
                                         }
                                     },
                                     name: {
@@ -342,11 +340,11 @@
                                         show: true,
                                         fontSize: '0.85rem',
                                         color: '#a1acb8',
-                                        label: 'Total Buku',
+                                        label: '{{ __('totalTitles') }}',
                                         formatter: function (w) {
                                             return w.globals.seriesTotals.reduce((a, b) => {
                                                 return a + b;
-                                            }, 0) + ' Buku';
+                                            }, 0) + ' {{ __('titlesUnit') }}';
                                         }
                                     }
                                 }

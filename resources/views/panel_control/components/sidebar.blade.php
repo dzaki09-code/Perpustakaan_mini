@@ -11,7 +11,7 @@
       <span class="app-brand-logo demo">
         <i class="bx bx-book-open fs-3 text-primary"></i>
       </span>
-      <span class="app-brand-text demo menu-text fw-bolder ms-2">Mini Library</span>
+      <span class="app-brand-text demo menu-text fw-bolder ms-1 fs-4">{{ __('miniLibrary') }}</span>
     </a>
     <a href="javascript:void(0);" class="layout-menu-toggle menu-link text-large ms-auto d-block d-xl-none">
       <i class="bx bx-chevron-left bx-sm align-middle"></i>
@@ -26,7 +26,7 @@
     <li class="menu-item {{ Route::is('dashboard') ? 'active' : '' }}">
       <a href="{{ route('dashboard') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-home-circle"></i>
-        <div data-i18n="Dashboard">Dashboard</div>
+        <div>{{ __('dashboard') }}</div>
       </a>
     </li>
 
@@ -34,18 +34,18 @@
     <li class="menu-item {{ Route::is('books.*') ? 'active open' : '' }}">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-book-open"></i>
-        <div data-i18n="Manajemen Buku">Manajemen Buku</div>
+        <div>{{ __('managementBooks') }}</div>
       </a>
       <ul class="menu-sub">
         <li class="menu-item {{ Route::is('books.index') ? 'active' : '' }}">
           <a href="{{ route('books.index') }}" class="menu-link">
-            <div data-i18n="Daftar Buku">Daftar Buku</div>
+            <div>{{ __('booksList') }}</div>
           </a>
         </li>
         @if ($isAdmin)
           <li class="menu-item {{ Route::is('books.create') ? 'active' : '' }}">
             <a href="{{ route('books.create') }}" class="menu-link">
-              <div data-i18n="Tambah Buku">Tambah Buku</div>
+              <div>{{ __('addBook') }}</div>
             </a>
           </li>
         @endif
@@ -57,7 +57,7 @@
       <li class="menu-item {{ Route::is('loans.index') ? 'active' : '' }}">
         <a href="{{ route('loans.index') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-book-reader"></i>
-          <div>Peminjaman</div>
+          <div>{{ __('loans') }}</div>
         </a>
       </li>
     @endif
@@ -65,7 +65,7 @@
       <li class="menu-item {{ Route::is('loans.index') ? 'active' : '' }}">
         <a href="{{ route('loans.index') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-book-reader"></i>
-          <div>Peminjaman Saya</div>
+          <div>{{ __('myLoansNav') }}</div>
         </a>
       </li>
     @endif
@@ -75,7 +75,7 @@
       <li class="menu-item {{ Route::is('loans.history') ? 'active' : '' }}">
         <a href="{{ route('loans.history') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-history"></i>
-          <div>Riwayat</div>
+          <div>{{ __('loanHistoryNav') }}</div>
         </a>
       </li>
     @endif
@@ -83,7 +83,7 @@
       <li class="menu-item {{ Route::is('loans.history') ? 'active' : '' }}">
         <a href="{{ route('loans.history') }}" class="menu-link">
           <i class="menu-icon tf-icons bx bx-history"></i>
-          <div>Riwayat Peminjaman Saya</div>
+          <div>{{ __('myLoanHistory') }}</div>
         </a>
       </li>
     @endif
@@ -93,12 +93,12 @@
       <li class="menu-item {{ Route::is('users.*') ? 'active open' : '' }}">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons bx bx-user"></i>
-          <div data-i18n="Pengguna">Pengguna</div>
+          <div>{{ __('usersNav') }}</div>
         </a>
         <ul class="menu-sub">
           <li class="menu-item {{ Route::is('users.index') ? 'active' : '' }}">
             <a href="{{ route('users.index') }}" class="menu-link">
-              <div data-i18n="Daftar Pengguna">Daftar Pengguna</div>
+              <div>{{ __('usersTitle') }}</div>
             </a>
           </li>
         </ul>
@@ -109,17 +109,17 @@
     <li class="menu-item">
       <a href="javascript:void(0);" class="menu-link menu-toggle">
         <i class="menu-icon tf-icons bx bx-user-circle"></i>
-        <div data-i18n="Akun">Akun</div>
+        <div>{{ __('accountNav') }}</div>
       </a>
       <ul class="menu-sub">
         <li class="menu-item">
           <a href="#" class="menu-link">
-            <div data-i18n="Profil">Profil</div>
+            <div>{{ __('profileNav') }}</div>
           </a>
         </li>
         <li class="menu-item">
           <a href="{{ route('signout') }}" class="menu-link">
-            <div data-i18n="Logout">Logout</div>
+            <div>{{ __('logoutNav') }}</div>
           </a>
         </li>
       </ul>

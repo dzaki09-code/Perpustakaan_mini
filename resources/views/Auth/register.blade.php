@@ -1,38 +1,33 @@
 <!DOCTYPE html>
-<html
-  lang="en"
-  class="light-style customizer-hide"
-  dir="ltr"
-  data-theme="theme-default"
-  data-assets-path="../assets/"
-  data-template="vertical-menu-template-free"
->
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"/>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light-style customizer-hide" dir="ltr"
+    data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
 
-    <title>Perpustakaan | Register</title>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>{{ __('register') }} | Perpustakaan</title>
 
     <meta name="description" content="" />
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon/favicon.ico') }}"/>
+    <link rel="icon" type="image/x-icon" href="{{ asset('assets/img/favicon/favicon.ico') }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-      rel="stylesheet"/>
+        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet" />
 
     <!-- Icons. Uncomment required icon fonts -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/fonts/boxicons.css') }}" />
 
     <!-- Core CSS -->
     <link rel="stylesheet" href="{{ asset('assets/vendor/css/core.css') }}" class="template-customizer-core-css" />
-    <link rel="stylesheet" href="{{ asset('assets/vendor/css/theme-default.css') }}" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="{{ asset('assets/vendor/css/theme-default.css') }}"
+        class="template-customizer-theme-css" />
     <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" />
 
     <!-- Vendors CSS -->
@@ -47,110 +42,139 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ asset('assets/js/config.js') }}"></script>
-  </head>
 
-  <body>
+    <style>
+      @keyframes slideInRight {
+        from {
+          transform: translateX(400px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+</head>
+
+<body>
     <!-- Content -->
 
     <div class="container-xxl">
-      <div class="authentication-wrapper authentication-basic container-p-y">
-        <div class="authentication-inner">
-          <!-- Register Card -->
-          <div class="card">
-            <div class="card-body">
-              <h4 class="mb-2 text-center">Daftar Akun Perpustakaan</h4>
-              <p class="text-center mb-4">Buat akun untuk mengakses sistem manajemen perpustakaan.</p>
+        <div class="authentication-wrapper authentication-basic container-p-y">
+            <div class="authentication-inner">
 
-              @if (session('success'))
-                <div class="alert alert-success" role="alert">
-                  {{ session('success') }}
-                </div>
-              @endif
+                <!-- Register Card -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center mb-3">
+                            <div class="dropdown">
+                                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button"
+                                    id="langDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bx bx-world"></i>
+                                    {{ strtoupper(app()->getLocale()) }}
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+                                    <li><a class="dropdown-item"
+                                            href="{{ url('lang', 'en') }}">{{ __('english') }}</a></li>
+                                    <li><a class="dropdown-item"
+                                            href="{{ url('lang', 'id') }}">{{ __('indonesian') }}</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <h4 class="mb-2 text-center">{{ __('registerTitle') }}</h4>
+                        <p class="text-center mb-4">{{ __('registerSubtitle') }}</p>
 
-              @if (session('error'))
-                <div class="alert alert-danger" role="alert">
-                  {{ session('error') }}
-                </div>
-              @endif
+                        @if (session('success') || session('error'))
+                            <div class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+                                @if (session('success'))
+                                    <div id="registerSuccessToast" class="toast border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3); animation: slideInRight 0.4s ease-out; min-width: 340px; border-radius: 12px;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="ps-3 pt-2 pb-2">
+                                                <i class="bx bx-check-circle" style="font-size: 24px; color: white;"></i>
+                                            </div>
+                                            <div class="toast-body text-white ps-2" style="font-weight: 500; font-size: 15px;">
+                                                {{ session('success') }}
+                                            </div>
+                                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                        </div>
+                                    </div>
+                                @endif
+                                @if (session('error'))
+                                    <div id="registerErrorToast" class="toast border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 10px 40px rgba(239, 68, 68, 0.3); animation: slideInRight 0.4s ease-out; min-width: 340px; border-radius: 12px;">
+                                        <div class="d-flex align-items-center">
+                                            <div class="ps-3 pt-2 pb-2">
+                                                <i class="bx bx-x-circle" style="font-size: 24px; color: white;"></i>
+                                            </div>
+                                            <div class="toast-body text-white ps-2" style="font-weight: 500; font-size: 15px;">
+                                                {{ session('error') }}
+                                            </div>
+                                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
 
-              <form id="formAuthentication" class="mb-3" action="{{ route('signup') }}" method="POST">
-                @csrf
-                <div class="mb-3">
-                  <label for="name" class="form-label">Nama</label>
-                  <input
-                    type="text"
-                    class="form-control @error('name') is-invalid @enderror"
-                    id="name"
-                    name="name"
-                    value="{{ old('name') }}"
-                    placeholder="Masukkan nama"
-                    autofocus
-                  />
-                  @error('name')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-                </div>
-                <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
-                  <input
-                    type="email"
-                    class="form-control @error('email') is-invalid @enderror"
-                    id="email"
-                    name="email"
-                    value="{{ old('email') }}"
-                    placeholder="Masukkan email"
-                  />
-                  @error('email')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                  @enderror
-                </div>
-                <div class="mb-3 form-password-toggle">
-                  <label class="form-label" for="password">Password</label>
-                  <div class="input-group input-group-merge">
-                    <input
-                      type="password"
-                      id="password"
-                      class="form-control @error('password') is-invalid @enderror"
-                      name="password"
-                      placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                      aria-describedby="password"
-                    />
-                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                    @error('password')
-                      <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                  </div>
-                </div>
-                <div class="mb-3 form-password-toggle">
-                  <label class="form-label" for="password_confirmation">Konfirmasi Password</label>
-                  <div class="input-group input-group-merge">
-                    <input
-                      type="password"
-                      id="password_confirmation"
-                      class="form-control"
-                      name="password_confirmation"
-                      placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
-                      aria-describedby="password_confirmation"
-                    />
-                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
-                  </div>
-                </div>
-                <div class="mb-3">
-                  <button class="btn btn-primary d-grid w-100" type="submit">Daftar</button>
-                </div>
-              </form>
+                        <form id="formAuthentication" class="mb-3" action="{{ route('signup') }}" method="POST">
+                            @csrf
+                            <div class="mb-3">
+                                <label for="name" class="form-label">{{ __('name') }}</label>
+                                <input type="text" class="form-control @error('name') is-invalid @enderror"
+                                    id="name" name="name" value="{{ old('name') }}"
+                                    placeholder="{{ __('namePlaceholder') }}" autofocus />
+                                @error('name')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">{{ __('email') }}</label>
+                                <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                    id="email" name="email" value="{{ old('email') }}"
+                                    placeholder="{{ __('emailPlaceholder') }}" />
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="mb-3 form-password-toggle">
+                                <label class="form-label" for="password">{{ __('password') }}</label>
+                                <div class="input-group input-group-merge">
+                                    <input type="password" id="password"
+                                        class="form-control @error('password') is-invalid @enderror" name="password"
+                                        placeholder="{{ __('passwordPlaceholder') }}" aria-describedby="password" />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                    @error('password')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="mb-3 form-password-toggle">
+                                <label class="form-label"
+                                    for="password_confirmation">{{ __('confirmPassword') }}</label>
+                                <div class="input-group input-group-merge">
+                                    <input type="password" id="password_confirmation" class="form-control"
+                                        name="password_confirmation" placeholder="{{ __('passwordPlaceholder') }}"
+                                        aria-describedby="password_confirmation" />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <button class="btn btn-primary d-grid w-100"
+                                    type="submit">{{ __('register') }}</button>
+                            </div>
+                        </form>
 
-              <p class="text-center">
-                <span>Sudah punya akun?</span>
-                <a href="{{ route('login') }}">
-                  <span>Masuk sekarang</span>
-                </a>
-              </p>
+                        <p class="text-center">
+                            <span>{{ __('haveAccount') }}</span>
+                            <a href="{{ route('login') }}">
+                                <span>{{ __('loginNow') }}</span>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+                <!-- Register Card -->
             </div>
-          </div>
-          <!-- Register Card -->
         </div>
-      </div>
     </div>
 
     <!-- Core JS -->
@@ -168,9 +192,55 @@
     <!-- Main JS -->
     <script src="{{ asset('assets/js/main.js') }}"></script>
 
+    @if (session('success') || session('error'))
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+            @if (session('success'))
+                <div id="registerSuccessToast" class="toast shadow-lg rounded-3 mb-2" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000" data-bs-autohide="true" style="min-width: 320px;">
+                    <div class="toast-header border-0 bg-white">
+                        <i class="bx bx-check-circle text-success fs-4 me-2"></i>
+                        <strong class="me-auto">{{ __('authSuccess') }}</strong>
+                        <small class="text-muted">{{ __('justNow') }}</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body bg-white text-dark">
+                        {{ session('success') }}
+                    </div>
+                </div>
+            @endif
+            @if (session('error'))
+                <div id="registerErrorToast" class="toast shadow-lg rounded-3" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000" data-bs-autohide="true" style="min-width: 320px;">
+                    <div class="toast-header border-0 bg-white">
+                        <i class="bx bx-x-circle text-danger fs-4 me-2"></i>
+                        <strong class="me-auto">{{ __('authError') }}</strong>
+                        <small class="text-muted">{{ __('justNow') }}</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body bg-white text-dark">
+                        {{ session('error') }}
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var successEl = document.getElementById('registerSuccessToast');
+                var errorEl = document.getElementById('registerErrorToast');
+
+                if (successEl) {
+                    new bootstrap.Toast(successEl).show();
+                }
+                if (errorEl) {
+                    new bootstrap.Toast(errorEl).show();
+                }
+            });
+        </script>
+    @endif
+
     <!-- Page JS -->
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-  </body>
+</body>
+
 </html>

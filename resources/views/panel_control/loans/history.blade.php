@@ -1,6 +1,6 @@
 @extends('panel_control.components.main')
 
-@section('title', 'Riwayat Peminjaman | Perpustakaan')
+@section('title', __('loanHistory') . ' | ' . __('dashboard'))
 
 @section('content')
   @php
@@ -9,9 +9,9 @@
 
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-      <h4 class="mb-1">{{ $isAdmin ? 'Riwayat Peminjaman' : 'Riwayat Peminjaman Saya' }}</h4>
+      <h4 class="mb-1">{{ $isAdmin ? __('loanHistory') : __('myLoanHistory') }}</h4>
       <p class="text-muted mb-0">
-        {{ $isAdmin ? 'Lihat riwayat peminjaman buku yang sudah selesai atau ditolak.' : 'Lihat riwayat peminjaman buku Anda yang sudah selesai atau ditolak.' }}
+        {{ $isAdmin ? __('trackLoans') : __('trackLoans') }}
       </p>
     </div>
   </div>
@@ -35,7 +35,7 @@
       <div class="card-body">
         <form method="GET" action="{{ route('loans.history') }}" class="row g-3 align-items-end">
           <div class="col-md-9">
-            <label for="searchHistory" class="form-label">Cari riwayat</label>
+            <label for="searchHistory" class="form-label">{{ __('searchLoan') }}</label>
             <input
               type="text"
               id="searchHistory"
@@ -47,9 +47,9 @@
           </div>
           <div class="col-md-3 d-flex gap-2 justify-content-end align-items-end">
             <button type="submit" class="btn btn-outline-primary">
-              <i class="bx bx-search me-1"></i>Cari
+              <i class="bx bx-search me-1"></i>{{ __('search') }}
             </button>
-            <a href="{{ route('loans.history') }}" class="btn btn-outline-secondary">Reset</a>
+            <a href="{{ route('loans.history') }}" class="btn btn-outline-secondary">{{ __('reset') }}</a>
           </div>
         </form>
       </div>
@@ -61,15 +61,15 @@
       <table class="table table-hover">
         <thead>
           <tr class="table-light">
-            <th>No</th>
+            <th>{{ __('tableNo') }}</th>
             @if ($isAdmin)
-              <th>Peminjam</th>
+              <th>{{ __('borrower') }}</th>
             @endif
-            <th>Buku</th>
-            <th>Tanggal Pinjam</th>
-            <th>Tanggal Kembali</th>
-            <th>Status</th>
-            <th class="text-center">Aksi</th>
+            <th>{{ __('book') }}</th>
+            <th>{{ __('borrowDate') }}</th>
+            <th>{{ __('returnDate') }}</th>
+            <th>{{ __('status') }}</th>
+            <th class="text-center">{{ __('actions') }}</th>
           </tr>
         </thead>
         <tbody class="table-border-bottom-0">
@@ -120,10 +120,10 @@
                     default => 'bg-label-secondary'
                   };
                   $statusLabel = match($loan->status) {
-                    'pending' => 'Menunggu Persetujuan',
-                    'approved' => 'Sedang Dipinjam',
-                    'returned' => 'Sudah Dikembalikan',
-                    'rejected' => 'Ditolak',
+                    'pending' => __('pending'),
+                    'approved' => __('approved'),
+                    'returned' => __('returned'),
+                    'rejected' => __('rejected'),
                     default => $loan->status
                   };
                 @endphp
@@ -131,7 +131,7 @@
               </td>
               <td class="text-center">
                 <a href="{{ route('loans.show', $loan) }}" class="btn btn-sm btn-outline-primary">
-                  <i class="bx bx-info-circle me-1"></i>Detail
+                  <i class="bx bx-info-circle me-1"></i>{{ __('detail') }}
                 </a>
               </td>
             </tr>

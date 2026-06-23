@@ -1,6 +1,6 @@
 @extends('panel_control.components.main')
 
-@section('title', 'Daftar Peminjaman | Perpustakaan')
+@section('title', __('loansList') . ' | ' . __('dashboard'))
 
 @section('content')
   @php
@@ -9,9 +9,9 @@
 
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-      <h4 class="mb-1">{{ $isAdmin ? 'Manajemen Peminjaman Buku' : 'Peminjaman Saya' }}</h4>
+      <h4 class="mb-1">{{ $isAdmin ? __('loanManagement') : __('myLoans') }}</h4>
       <p class="text-muted mb-0">
-        {{ $isAdmin ? 'Kelola persetujuan pengajuan pinjaman dan proses pengembalian buku.' : 'Pantau daftar pengajuan peminjaman dan riwayat bacaan Anda.' }}
+        {{ $isAdmin ? __('manageLoanApprovals') : __('trackLoans') }}
       </p>
     </div>
   </div>
@@ -35,7 +35,7 @@
       <div class="card-body">
         <form method="GET" action="{{ route('loans.index') }}" class="row g-3 align-items-end">
           <div class="col-md-9">
-            <label for="searchLoan" class="form-label">Cari peminjaman</label>
+            <label for="searchLoan" class="form-label">{{ __('searchLoan') }}</label>
             <input
               type="text"
               id="searchLoan"
@@ -47,9 +47,9 @@
           </div>
           <div class="col-md-3 d-flex gap-2 justify-content-end align-items-end">
             <button type="submit" class="btn btn-outline-primary">
-              <i class="bx bx-search me-1"></i>Cari
+              <i class="bx bx-search me-1"></i>{{ __('search') }}
             </button>
-            <a href="{{ route('loans.index') }}" class="btn btn-outline-secondary">Reset</a>
+            <a href="{{ route('loans.index') }}" class="btn btn-outline-secondary">{{ __('reset') }}</a>
           </div>
         </form>
       </div>
@@ -61,15 +61,15 @@
       <table class="table table-hover">
         <thead>
           <tr class="table-light">
-            <th>No</th>
+            <th>{{ __('tableNo') }}</th>
             @if ($isAdmin)
-              <th>Peminjam</th>
+              <th>{{ __('borrower') }}</th>
             @endif
-            <th>Buku</th>
-            <th>Tanggal Pinjam</th>
-            <th>Tanggal Kembali</th>
-            <th>Status</th>
-            <th class="text-center">Aksi</th>
+            <th>{{ __('book') }}</th>
+            <th>{{ __('borrowDate') }}</th>
+            <th>{{ __('returnDate') }}</th>
+            <th>{{ __('status') }}</th>
+            <th class="text-center">{{ __('actions') }}</th>
           </tr>
         </thead>
         <tbody class="table-border-bottom-0">
@@ -120,10 +120,10 @@
                     default => 'bg-label-secondary'
                   };
                   $statusLabel = match($loan->status) {
-                    'pending' => 'Menunggu Persetujuan',
-                    'approved' => 'Sedang Dipinjam',
-                    'returned' => 'Sudah Dikembalikan',
-                    'rejected' => 'Ditolak',
+                    'pending' => __('pending'),
+                    'approved' => __('approved'),
+                    'returned' => __('returned'),
+                    'rejected' => __('rejected'),
                     default => $loan->status
                   };
                 @endphp
@@ -132,41 +132,41 @@
               <td>
                 <div class="d-flex justify-content-center gap-2">
                   <a href="{{ route('loans.show', $loan) }}" class="btn btn-sm btn-outline-primary">
-                    <i class="bx bx-info-circle me-1"></i>Detail
+                    <i class="bx bx-info-circle me-1"></i>{{ __('detail') }}
                   </a>
                   @if ($isAdmin)
                     @if ($loan->status === 'pending')
-                      <form action="{{ route('loans.approve', $loan) }}" method="POST" onsubmit="return confirm('Setujui peminjaman buku ini?')">
+                      <form action="{{ route('loans.approve', $loan) }}" method="POST" onsubmit="return confirm('{{ __('approveConfirm') }}')">
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="btn btn-sm btn-success">
-                          <i class="bx bx-check me-1"></i>Setujui
+                          <i class="bx bx-check me-1"></i>{{ __('approve') }}
                         </button>
                       </form>
-                      <form action="{{ route('loans.reject', $loan) }}" method="POST" onsubmit="return confirm('Tolak peminjaman buku ini?')">
+                      <form action="{{ route('loans.reject', $loan) }}" method="POST" onsubmit="return confirm('{{ __('rejectConfirm') }}')">
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="btn btn-sm btn-danger">
-                          <i class="bx bx-x me-1"></i>Tolak
+                          <i class="bx bx-x me-1"></i>{{ __('reject') }}
                         </button>
                       </form>
                     @elseif ($loan->status === 'approved')
-                      <form action="{{ route('loans.return', $loan) }}" method="POST" onsubmit="return confirm('Konfirmasi pengembalian buku ini?')">
+                      <form action="{{ route('loans.return', $loan) }}" method="POST" onsubmit="return confirm('{{ __('borrowConfirm') }}')">
                         @csrf
                         @method('PATCH')
                         <button type="submit" class="btn btn-sm btn-info">
-                          <i class="bx bx-undo me-1"></i>Kembalikan Buku
+                          <i class="bx bx-undo me-1"></i>{{ __('return') }}
                         </button>
                       </form>
                     @endif
                   @endif
 
                   @if (! $isAdmin && $loan->status === 'approved')
-                    <form action="{{ route('loans.return', $loan) }}" method="POST" onsubmit="return confirm('Konfirmasi pengembalian buku ini?')">
+                    <form action="{{ route('loans.return', $loan) }}" method="POST" onsubmit="return confirm('{{ __('borrowConfirm') }}')">
                       @csrf
                       @method('PATCH')
                       <button type="submit" class="btn btn-sm btn-info">
-                        <i class="bx bx-undo me-1"></i>Kembalikan Buku
+                        <i class="bx bx-undo me-1"></i>{{ __('return') }}
                       </button>
                     </form>
                   @endif

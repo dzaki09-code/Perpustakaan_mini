@@ -73,7 +73,7 @@ class AuthController extends Controller
             $response = $this->authService->login($validated);
 
             if (!$response) {
-                return redirect()->back()->with('error', 'Kredensial tidak valid!');
+                return redirect()->back()->with('error', 'Password tidak valid!');
             }
             return redirect()->route('dashboard')->with('success', 'Login berhasil');
         } catch (\Throwable $th) {

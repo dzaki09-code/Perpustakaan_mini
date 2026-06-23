@@ -30,7 +30,9 @@ class AuthService
     {
         try {
             if (Auth::attempt(['email' => $data['email'],'password' => $data['password']])) {
-                if (! Auth::user()->isActive()) {
+                /** @var \App\Models\User $user */
+                $user = Auth::user();
+                if (! $user->isActive()) {
                     Auth::logout();
                     return false;
                 }

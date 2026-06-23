@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html
-  lang="en"
+  lang="{{ str_replace('_', '-', app()->getLocale()) }}"
   class="light-style layout-menu-fixed"
   dir="ltr"
   data-theme="theme-default"
@@ -65,6 +65,19 @@
       }
     </style>
 
+    <style>
+      @keyframes slideInRight {
+        from {
+          transform: translateX(400px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+
     @stack('styles')
 
     <!-- Helpers -->
@@ -83,30 +96,36 @@
           <div class="content-wrapper">
             <div class="container-xxl flex-grow-1 container-p-y">
                 @if(session('success'))
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Close">
-                    </button>
-                 @endif
+                    <div class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+                        <div id="dashboardSuccessToast" class="toast border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3); animation: slideInRight 0.4s ease-out; min-width: 340px; border-radius: 12px;">
+                            <div class="d-flex align-items-center">
+                                <div class="ps-3 pt-2 pb-2">
+                                    <i class="bx bx-check-circle" style="font-size: 24px; color: white;"></i>
+                                </div>
+                                <div class="toast-body text-white ps-2" style="font-weight: 500; font-size: 15px;">
+                                    {{ session('success') }}
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    </div>
+                @endif
 
                 @if(session('error'))
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         {{ session('error') }}
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Close">
-                    </button>
+                        <button
+                            type="button"
+                            class="btn-close"
+                            data-bs-dismiss="alert"
+                            aria-label="Close">
+                        </button>
+                    </div>
                 @endif
 
                 @yield('content')
 
-        </div>
+            </div>
             </div>
 
             @include('panel_control.components.footer')
@@ -139,42 +158,46 @@
         const sidebarToggle = document.getElementById('sidebarToggle');
         const desktopBreakpoint = 1200;
 
-        if (!sidebarToggle) {
-          return;
+        if (sidebarToggle) {
+          const setExpandedState = function () {
+            const isDesktop = window.innerWidth >= desktopBreakpoint;
+            const isHidden = isDesktop
+              ? html.classList.contains('layout-sidebar-hidden')
+              : !html.classList.contains('layout-menu-expanded');
+
+            sidebarToggle.setAttribute('aria-expanded', String(!isHidden));
+          };
+
+          sidebarToggle.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            if (window.innerWidth >= desktopBreakpoint) {
+              const shouldHideSidebar = !html.classList.contains('layout-sidebar-hidden');
+
+              html.classList.toggle('layout-sidebar-hidden', shouldHideSidebar);
+              html.classList.remove('layout-menu-expanded');
+
+              if (!shouldHideSidebar) {
+                html.classList.remove('layout-menu-collapsed', 'layout-menu-hover');
+              }
+            } else {
+              html.classList.toggle('layout-menu-expanded');
+              html.classList.remove('layout-sidebar-hidden');
+            }
+
+            setExpandedState();
+            window.dispatchEvent(new Event('resize'));
+          });
+
+          window.addEventListener('resize', setExpandedState);
+          setExpandedState();
         }
 
-        const setExpandedState = function () {
-          const isDesktop = window.innerWidth >= desktopBreakpoint;
-          const isHidden = isDesktop
-            ? html.classList.contains('layout-sidebar-hidden')
-            : !html.classList.contains('layout-menu-expanded');
-
-          sidebarToggle.setAttribute('aria-expanded', String(!isHidden));
-        };
-
-        sidebarToggle.addEventListener('click', function (event) {
-          event.preventDefault();
-
-          if (window.innerWidth >= desktopBreakpoint) {
-            const shouldHideSidebar = !html.classList.contains('layout-sidebar-hidden');
-
-            html.classList.toggle('layout-sidebar-hidden', shouldHideSidebar);
-            html.classList.remove('layout-menu-expanded');
-
-            if (!shouldHideSidebar) {
-              html.classList.remove('layout-menu-collapsed', 'layout-menu-hover');
-            }
-          } else {
-            html.classList.toggle('layout-menu-expanded');
-            html.classList.remove('layout-sidebar-hidden');
-          }
-
-          setExpandedState();
-          window.dispatchEvent(new Event('resize'));
-        });
-
-        window.addEventListener('resize', setExpandedState);
-        setExpandedState();
+        const toastEl = document.getElementById('dashboardSuccessToast');
+        if (toastEl) {
+          const toast = new bootstrap.Toast(toastEl);
+          toast.show();
+        }
       });
     </script>
 

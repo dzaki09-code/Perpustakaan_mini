@@ -1,6 +1,6 @@
 @extends('panel_control.components.main')
 
-@section('title', 'Detail Buku | Perpustakaan')
+@section('title', __('detailBook') . ' | ' . __('dashboard'))
 
 @section('content')
   @if (session('success'))
@@ -19,10 +19,10 @@
 
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-      <h4 class="mb-1">Detail Buku</h4>
-      <p class="text-muted mb-0">Informasi lengkap buku yang sudah ditambahkan ke sistem.</p>
+      <h4 class="mb-1">{{ __('detailBook') }}</h4>
+      <p class="text-muted mb-0">{{ __('detailBookSubtitle') }}</p>
     </div>
-    <a href="{{ route('books.index') }}" class="btn btn-outline-secondary">Kembali</a>
+    <a href="{{ route('books.index') }}" class="btn btn-outline-secondary">{{ __('back') }}</a>
   </div>
 
   <div class="card">
@@ -34,31 +34,31 @@
             <table class="table table-borderless mb-0">
               <tbody>
                 <tr>
-                  <th style="width: 220px;">Penulis</th>
+                  <th style="width: 220px;">{{ __('author') }}</th>
                   <td>{{ $book->author }}</td>
                 </tr>
                 <tr>
-                  <th>Penerbit</th>
+                  <th>{{ __('publisher') }}</th>
                   <td>{{ $book->publisher ?: '-' }}</td>
                 </tr>
                 <tr>
-                  <th>Tahun Terbit</th>
+                  <th>{{ __('year') }}</th>
                   <td>{{ $book->publication_year ?: '-' }}</td>
                 </tr>
                 <tr>
-                  <th>Kategori</th>
+                  <th>{{ __('category') }}</th>
                   <td>{{ $book->category ?: '-' }}</td>
                 </tr>
                 <tr>
-                  <th>ISBN</th>
+                  <th>{{ __('isbn') }}</th>
                   <td>{{ $book->isbn ?: '-' }}</td>
                 </tr>
                 <tr>
-                  <th>Stok</th>
+                  <th>{{ __('stock') }}</th>
                   <td>{{ $book->stock }}</td>
                 </tr>
                 <tr>
-                  <th>Deskripsi</th>
+                  <th>{{ __('description') }}</th>
                   <td>{{ $book->description ?: '-' }}</td>
                 </tr>
               </tbody>
@@ -68,10 +68,10 @@
 
         <div class="col-lg-4">
           <div class="p-4 rounded bg-light h-100">
-            <h6 class="mb-3">Ringkasan</h6>
-            <p class="mb-2"><strong>Ditambahkan:</strong> {{ $book->created_at?->format('d M Y H:i') ?? '-' }}</p>
-            <p class="mb-2"><strong>Diperbarui:</strong> {{ $book->updated_at?->format('d M Y H:i') ?? '-' }}</p>
-            <p class="mb-3"><strong>Status stok:</strong> {{ $book->stock > 0 ? 'Tersedia' : 'Habis' }}</p>
+            <h6 class="mb-3">{{ __('summary') }}</h6>
+            <p class="mb-2"><strong>{{ __('added') }}:</strong> {{ $book->created_at?->format('d M Y H:i') ?? '-' }}</p>
+            <p class="mb-2"><strong>{{ __('updated') }}:</strong> {{ $book->updated_at?->format('d M Y H:i') ?? '-' }}</p>
+            <p class="mb-3"><strong>{{ __('stockStatus') }}</strong> {{ $book->stock > 0 ? __('available') : __('outOfStock') }}</p>
 
             @php
               $currentUser = auth()->user();
@@ -89,11 +89,11 @@
             @if($book->read_url)
               @if($isAdmin || $isLoanApproved)
                 <a href="{{ $book->read_url }}" target="_blank" class="btn btn-primary w-100 mb-3">
-                  <i class="bx bx-book-open me-1"></i> Baca Buku Online
+                  <i class="bx bx-book-open me-1"></i> {{ __('readBookOnline') }}
                 </a>
               @else
-                <button class="btn btn-outline-secondary w-100 mb-3" disabled title="Pinjam buku ini terlebih dahulu untuk membaca online">
-                  <i class="bx bx-lock-alt me-1"></i> Baca Online (Terkunci)
+                <button class="btn btn-outline-secondary w-100 mb-3" disabled title="{{ __('getApprovalToRead') }}">
+                  <i class="bx bx-lock-alt me-1"></i> {{ __('readOnlineLocked') }}
                 </button>
               @endif
             @endif
@@ -120,7 +120,7 @@
                   </button>
                 </form>
               @else
-                <button class="btn btn-secondary w-100" disabled>Stok Habis</button>
+                <button class="btn btn-secondary w-100" disabled>{{ __('outOfStock') }}</button>
               @endif
             @endif
           </div>

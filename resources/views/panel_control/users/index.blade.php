@@ -1,6 +1,6 @@
 @extends('panel_control.components.main')
 
-@section('title', 'Daftar Pengguna | Perpustakaan')
+@section('title', __('usersTitle') . ' | ' . __('dashboard'))
 
 @section('content')
   @php
@@ -10,8 +10,8 @@
   <div class="card">
     <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-3">
       <div>
-        <h5 class="mb-1">Daftar Pengguna</h5>
-        <small class="text-muted">Akun admin dan anggota yang terdaftar di sistem.</small>
+        <h5 class="mb-1">{{ __('usersTitle') }}</h5>
+        <small class="text-muted">{{ __('usersSubtitle') }}</small>
       </div>
 
       @if (session('success'))
@@ -27,8 +27,8 @@
       @endif
 
       <form method="GET" action="{{ route('users.index') }}" class="row g-3 align-items-end" style="width:100%; max-width:720px;">
-        <div class="col-md-9">
-          <label for="searchUser" class="form-label">Cari pengguna</label>
+        <div class="col-md-8">
+          <label for="searchUser" class="form-label">{{ __('searchPlaceholderUsers') }}</label>
           <input
             type="text"
             id="searchUser"
@@ -38,11 +38,11 @@
             value="{{ request('q') }}"
           />
         </div>
-        <div class="col-md-3 d-flex gap-2 justify-content-end align-items-end">
+        <div class="col-md-4 d-flex gap-3 justify-content-end align-items-end">
           <button type="submit" class="btn btn-outline-primary">
-            <i class="bx bx-search me-2"></i>Cari
+            <i class="bx bx-search me-2"></i>{{ __('search') }}
           </button>
-          <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">Reset</a>
+          <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">{{ __('reset') }}</a>
         </div>
       </form>
     </div>
@@ -51,12 +51,12 @@
       <table class="table table-borderless mb-0">
         <thead>
           <tr>
-            <th class="text-uppercase text-muted letter-spacing-1">No</th>
-            <th class="text-uppercase text-muted letter-spacing-1">Nama</th>
-            <th class="text-uppercase text-muted letter-spacing-1">Email</th>
-            <th class="text-uppercase text-muted letter-spacing-1">Role</th>
-            <th class="text-uppercase text-muted letter-spacing-1">Status</th>
-            <th class="text-uppercase text-muted letter-spacing-1 text-center">Aksi</th>
+            <th class="text-uppercase text-muted letter-spacing-1">{{ __('tableNo') }}</th>
+            <th class="text-uppercase text-muted letter-spacing-1">{{ __('name') }}</th>
+            <th class="text-uppercase text-muted letter-spacing-1">{{ __('email') }}</th>
+            <th class="text-uppercase text-muted letter-spacing-1">{{ __('tableRole') }}</th>
+            <th class="text-uppercase text-muted letter-spacing-1">{{ __('tableStatus') }}</th>
+            <th class="text-uppercase text-muted letter-spacing-1 text-center">{{ __('actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -72,14 +72,14 @@
                   </div>
                   <div>
                     <strong>{{ $user->name }}</strong>
-                    <div class="small text-muted">Bergabung {{ $user->created_at?->format('d M Y') ?? '-' }}</div>
+                    <div class="small text-muted">{{ __('joined') }} {{ $user->created_at?->format('d M Y') ?? '-' }}</div>
                   </div>
                 </div>
               </td>
               <td>{{ $user->email }}</td>
               <td>
                 <span class="badge bg-label-{{ $user->isAdmin() ? 'primary' : 'secondary' }}">
-                  {{ ucfirst($user->role) }}
+                  {{ $user->isAdmin() ? __('admin') : __('member') }}
                 </span>
               </td>
               <td>
@@ -98,7 +98,7 @@
                       @method('PATCH')
                       <input type="hidden" name="status" value="active" />
                       <button type="submit" class="dropdown-item" @disabled($user->status === 'active' || auth()->id() === $user->id)>
-                        Aktifkan
+                        {{ __('activate') }}
                       </button>
                     </form>
                     <form action="{{ route('users.update_status', $user) }}" method="POST">
@@ -106,15 +106,15 @@
                       @method('PATCH')
                       <input type="hidden" name="status" value="inactive" />
                       <button type="submit" class="dropdown-item" @disabled($user->status === 'inactive' || auth()->id() === $user->id)>
-                        Nonaktifkan
+                        {{ __('deactivate') }}
                       </button>
                     </form>
-                    <form action="{{ route('users.update_status', $user) }}" method="POST" onsubmit="return confirm('Blokir pengguna ini?')">
+                    <form action="{{ route('users.update_status', $user) }}" method="POST" onsubmit="return confirm('{{ __('blockConfirm') }}')">
                       @csrf
                       @method('PATCH')
                       <input type="hidden" name="status" value="blocked" />
                       <button type="submit" class="dropdown-item text-danger" @disabled($user->status === 'blocked' || auth()->id() === $user->id)>
-                        Blokir
+                        {{ __('block') }}
                       </button>
                     </form>
                   </div>
@@ -123,7 +123,7 @@
             </tr>
           @empty
             <tr>
-              <td colspan="6" class="text-center py-4 text-muted">Belum ada data pengguna.</td>
+              <td colspan="6" class="text-center py-4 text-muted">{{ __('noDataUsers') }}</td>
             </tr>
           @endforelse
         </tbody>

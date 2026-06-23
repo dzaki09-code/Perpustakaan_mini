@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PanelControl\BookController;
 use App\Http\Controllers\PanelControl\DashboardController;
 use App\Http\Controllers\PanelControl\UserController;
-
+use App\Http\Controllers\PanelControl\LoanController;
 
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -33,7 +33,17 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::patch('/users/{user}/status', [UserController::class, 'updateStatus'])->name('users.update_status');
+
+        // Manajemen peminjaman
+        Route::patch('/loans/{loan}/approve', [LoanController::class, 'approve'])->name('loans.approve');
+        Route::patch('/loans/{loan}/reject', [LoanController::class, 'reject'])->name('loans.reject');
+        Route::patch('/loans/{loan}/return', [LoanController::class, 'returnBook'])->name('loans.return');
     });
 
     Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+
+    // Peminjaman buku
+    Route::get('/loans', [LoanController::class, 'index'])->name('loans.index');
+    Route::post('/books/{book}/borrow', [LoanController::class, 'borrow'])->name('loans.borrow');
+
 });

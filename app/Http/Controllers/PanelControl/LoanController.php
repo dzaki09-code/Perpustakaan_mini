@@ -8,6 +8,7 @@ use App\Models\Loan;
 use App\Models\User;
 use App\Services\LoanService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -20,7 +21,7 @@ class LoanController extends Controller
     /**
      * Menampilkan daftar peminjaman.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
         $user = Auth::user();
 
@@ -28,17 +29,20 @@ class LoanController extends Controller
             abort(403);
         }
 
-        if ($user->isAdmin()) {
-            $loans = Loan::with([
-                'user',
-                'book'
-            ])->latest()->get();
-        } else {
-            $loans = Loan::with('book')
-                ->where('user_id', $user->id)
-                ->latest()
-                ->get();
+        $query = Loan::with(['book', 'user'])->latest();
+
+        if (! $user->isAdmin()) {
+            $query->where('user_id', $user->id);
         }
+
+        if ($user->isAdmin() && $search = $request->query('q')) {
+            $query->where(function ($query) use ($search) {
+                $query->whereHas('book', fn ($book) => $book->where('title', 'like', "%{$search}%"))
+                      ->orWhereHas('user', fn ($user) => $user->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        $loans = $query->paginate(10);
 
         return view('panel_control.loans.index', compact('loans'));
     }
@@ -100,6 +104,34 @@ class LoanController extends Controller
     /**
      * Menampilkan detail peminjaman.
      */
+    public function history(Request $request): View
+    {
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
+            abort(403);
+        }
+
+        $query = Loan::with(['book', 'user'])
+            ->whereIn('status', ['returned', 'rejected'])
+            ->latest();
+
+        if (! $user->isAdmin()) {
+            $query->where('user_id', $user->id);
+        }
+
+        if ($user->isAdmin() && $search = $request->query('q')) {
+            $query->where(function ($query) use ($search) {
+                $query->whereHas('book', fn ($book) => $book->where('title', 'like', "%{$search}%"))
+                      ->orWhereHas('user', fn ($user) => $user->where('name', 'like', "%{$search}%"));
+            });
+        }
+
+        $loans = $query->paginate(10);
+
+        return view('panel_control.loans.history', compact('loans'));
+    }
+
     public function show(Loan $loan): View
     {
         $user = Auth::user();

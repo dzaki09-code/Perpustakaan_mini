@@ -1,6 +1,6 @@
 @extends('panel_control.components.main')
 
-@section('title', 'Daftar Peminjaman | Perpustakaan')
+@section('title', 'Riwayat Peminjaman | Perpustakaan')
 
 @section('content')
   @php
@@ -9,9 +9,9 @@
 
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
-      <h4 class="mb-1">{{ $isAdmin ? 'Manajemen Peminjaman Buku' : 'Peminjaman Saya' }}</h4>
+      <h4 class="mb-1">{{ $isAdmin ? 'Riwayat Peminjaman' : 'Riwayat Peminjaman Saya' }}</h4>
       <p class="text-muted mb-0">
-        {{ $isAdmin ? 'Kelola persetujuan pengajuan pinjaman dan proses pengembalian buku.' : 'Pantau daftar pengajuan peminjaman dan riwayat bacaan Anda.' }}
+        {{ $isAdmin ? 'Lihat riwayat peminjaman buku yang sudah selesai atau ditolak.' : 'Lihat riwayat peminjaman buku Anda yang sudah selesai atau ditolak.' }}
       </p>
     </div>
   </div>
@@ -33,12 +33,12 @@
   @if ($isAdmin)
     <div class="card mb-4">
       <div class="card-body">
-        <form method="GET" action="{{ route('loans.index') }}" class="row g-3 align-items-end">
+        <form method="GET" action="{{ route('loans.history') }}" class="row g-3 align-items-end">
           <div class="col-md-9">
-            <label for="searchLoan" class="form-label">Cari peminjaman</label>
+            <label for="searchHistory" class="form-label">Cari riwayat</label>
             <input
               type="text"
-              id="searchLoan"
+              id="searchHistory"
               name="q"
               class="form-control"
               placeholder="Cari nama buku atau nama peminjam"
@@ -49,7 +49,7 @@
             <button type="submit" class="btn btn-outline-primary">
               <i class="bx bx-search me-1"></i>Cari
             </button>
-            <a href="{{ route('loans.index') }}" class="btn btn-outline-secondary">Reset</a>
+            <a href="{{ route('loans.history') }}" class="btn btn-outline-secondary">Reset</a>
           </div>
         </form>
       </div>
@@ -129,43 +129,15 @@
                 @endphp
                 <span class="badge {{ $statusBadge }}">{{ $statusLabel }}</span>
               </td>
-              <td>
-                <div class="d-flex justify-content-center gap-2">
-                  <a href="{{ route('loans.show', $loan) }}" class="btn btn-sm btn-outline-primary">
-                    <i class="bx bx-info-circle me-1"></i>Detail
-                  </a>
-                  @if ($isAdmin)
-                    @if ($loan->status === 'pending')
-                      <form action="{{ route('loans.approve', $loan) }}" method="POST" onsubmit="return confirm('Setujui peminjaman buku ini?')">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" class="btn btn-sm btn-success">
-                          <i class="bx bx-check me-1"></i>Setujui
-                        </button>
-                      </form>
-                      <form action="{{ route('loans.reject', $loan) }}" method="POST" onsubmit="return confirm('Tolak peminjaman buku ini?')">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" class="btn btn-sm btn-danger">
-                          <i class="bx bx-x me-1"></i>Tolak
-                        </button>
-                      </form>
-                    @elseif ($loan->status === 'approved')
-                      <form action="{{ route('loans.return', $loan) }}" method="POST" onsubmit="return confirm('Konfirmasi pengembalian buku ini?')">
-                        @csrf
-                        @method('PATCH')
-                        <button type="submit" class="btn btn-sm btn-info">
-                          <i class="bx bx-undo me-1"></i>Kembalikan Buku
-                        </button>
-                      </form>
-                    @endif
-                  @endif
-                </div>
+              <td class="text-center">
+                <a href="{{ route('loans.show', $loan) }}" class="btn btn-sm btn-outline-primary">
+                  <i class="bx bx-info-circle me-1"></i>Detail
+                </a>
               </td>
             </tr>
           @empty
             <tr>
-              <td colspan="{{ $isAdmin ? 7 : 5 }}" class="text-center py-4 text-muted">Belum ada data transaksi peminjaman.</td>
+              <td colspan="{{ $isAdmin ? 7 : 5 }}" class="text-center py-4 text-muted">Belum ada riwayat peminjaman.</td>
             </tr>
           @endforelse
         </tbody>

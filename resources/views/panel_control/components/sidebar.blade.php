@@ -52,11 +52,29 @@
       </ul>
     </li>
 
-    <!-- Peminjaman -->
-    <li class="menu-item {{ Route::is('loans.*') ? 'active' : '' }}">
-      <a href="{{ route('loans.index') }}" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-transfer"></i>
-        <div data-i18n="Peminjaman">{{ $isAdmin ? 'Daftar Peminjaman' : 'Peminjaman Saya' }}</div>
+    <!-- Peminjaman sesuai dengan role -->
+    @if(auth()->user()->isAdmin())
+      <li class="menu-item {{ Route::is('loans.index') ? 'active' : '' }}">
+        <a href="{{ route('loans.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-book-reader"></i>
+          <div>Peminjaman</div>
+        </a>
+      </li>
+    @endif
+    @if(auth()->user()->isUser())
+      <li class="menu-item {{ Route::is('loans.index') ? 'active' : '' }}">
+        <a href="{{ route('loans.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-book-reader"></i>
+          <div>Peminjaman Saya</div>
+        </a>
+      </li>
+    @endif
+
+    <!-- Riwayat -->
+    <li class="menu-item {{ Route::is('loans.history') ? 'active' : '' }}">
+      <a href="{{ route('loans.history') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-history"></i>
+        <div>Riwayat</div>
       </a>
     </li>
 

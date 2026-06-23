@@ -52,6 +52,13 @@
       </ul>
     </li>
 
+    <li class="menu-item {{ Route::is('loans.*') ? 'active' : '' }}">
+      <a href="{{ route('loans.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-book"></i>
+        <div>Peminjaman</div>
+      </a>
+    </li>
+
     @if ($isAdmin)
       <!-- Peminjaman -->
       <li class="menu-item">

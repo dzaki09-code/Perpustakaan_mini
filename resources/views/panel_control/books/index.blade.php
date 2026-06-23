@@ -4,7 +4,9 @@
 
 @section('content')
   @php
-    $isAdmin = auth()->user()?->isAdmin() ?? false;
+    $currentUser = auth()->user();
+    $isAdmin = $currentUser?->isAdmin() ?? false;
+    $isUser = $currentUser?->isUser() ?? false;
   @endphp
 
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
@@ -64,7 +66,7 @@
             <th>Tahun</th>
             <th>Stok</th>
             <th>ISBN</th>
-            @if ($isAdmin)
+            @if ($isAdmin || $isUser)
               <th class="text-end">Aksi</th>
             @endif
           </tr>
@@ -82,15 +84,24 @@
               <td>{{ $book->publication_year ?: '-' }}</td>
               <td>{{ $book->stock }}</td>
               <td>{{ $book->isbn ?: '-' }}</td>
-              @if ($isAdmin)
+              @if ($isAdmin || $isUser)
                 <td>
                   <div class="d-flex justify-content-end gap-2">
-                    <a href="{{ route('books.edit', $book) }}" class="btn btn-sm btn-warning">Edit</a>
-                    <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('Hapus data buku ini?')">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                    </form>
+                    @if ($isUser)
+                      <form action="{{ route('loans.borrow', $book) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-primary btn-sm">Pinjam</button>
+                      </form>
+                    @endif
+
+                    @if ($isAdmin)
+                      <a href="{{ route('books.edit', $book) }}" class="btn btn-sm btn-warning">Edit</a>
+                      <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('Hapus data buku ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
+                      </form>
+                    @endif
                   </div>
                 </td>
               @endif

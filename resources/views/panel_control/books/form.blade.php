@@ -22,6 +22,7 @@
         @if ($mode === 'edit')
           @method('PUT')
         @endif
+        <input type="hidden" id="read_url" name="read_url" value="{{ old('read_url', $book->read_url) }}" />
 
         <div class="row g-3">
           <div class="col-md-8">
@@ -137,6 +138,7 @@
       const categoryInput = document.getElementById('category');
       const isbnInput = document.getElementById('isbn');
       const descriptionInput = document.getElementById('description');
+      const readUrlInput = document.getElementById('read_url');
 
       if (!lookupButton) {
         return;
@@ -200,6 +202,7 @@
             if (book.category) categoryInput.value = book.category;
             if (book.isbn) isbnInput.value = book.isbn;
             if (book.description) descriptionInput.value = book.description;
+            if (readUrlInput) readUrlInput.value = book.read_url || '';
 
             modal.hide();
           });

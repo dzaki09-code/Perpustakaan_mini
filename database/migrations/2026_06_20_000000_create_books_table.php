@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('isbn')->nullable()->unique();
             $table->unsignedInteger('stock')->default(0);
             $table->text('description')->nullable();
+            $table->string('read_url')->nullable();
             $table->timestamps();
         });
     }

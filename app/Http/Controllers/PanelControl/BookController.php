@@ -131,6 +131,7 @@ class BookController extends Controller
             ],
             'stock' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
+            'read_url' => ['nullable', 'string', 'max:2048'],
         ]);
     }
 
@@ -194,6 +195,7 @@ class BookController extends Controller
             'category' => data_get($book, 'subjects.0.name'),
             'isbn' => $isbn,
             'description' => data_get($book, 'notes') ?? data_get($book, 'subtitle'),
+            'read_url' => data_get($book, 'url'),
         ];
     }
 
@@ -209,6 +211,7 @@ class BookController extends Controller
             'category' => data_get($book, 'subject.0'),
             'isbn' => $isbn,
             'description' => data_get($book, 'subtitle'),
+            'read_url' => data_get($book, 'key') ? 'https://openlibrary.org' . data_get($book, 'key') : null,
         ];
     }
 

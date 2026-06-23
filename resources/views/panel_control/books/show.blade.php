@@ -3,6 +3,20 @@
 @section('title', 'Detail Buku | Perpustakaan')
 
 @section('content')
+  @if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
+
+  @if (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{ session('error') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  @endif
+
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
     <div>
       <h4 class="mb-1">Detail Buku</h4>
@@ -57,7 +71,58 @@
             <h6 class="mb-3">Ringkasan</h6>
             <p class="mb-2"><strong>Ditambahkan:</strong> {{ $book->created_at?->format('d M Y H:i') ?? '-' }}</p>
             <p class="mb-2"><strong>Diperbarui:</strong> {{ $book->updated_at?->format('d M Y H:i') ?? '-' }}</p>
-            <p class="mb-0"><strong>Status stok:</strong> {{ $book->stock > 0 ? 'Tersedia' : 'Habis' }}</p>
+            <p class="mb-3"><strong>Status stok:</strong> {{ $book->stock > 0 ? 'Tersedia' : 'Habis' }}</p>
+
+            @php
+              $currentUser = auth()->user();
+              $isAdmin = $currentUser?->isAdmin() ?? false;
+              $isLoanApproved = false;
+
+              if (!$isAdmin && $currentUser) {
+                  $isLoanApproved = $currentUser->loans()
+                      ->where('book_id', $book->id)
+                      ->where('status', 'approved')
+                      ->exists();
+              }
+            @endphp
+
+            @if($book->read_url)
+              @if($isAdmin || $isLoanApproved)
+                <a href="{{ $book->read_url }}" target="_blank" class="btn btn-primary w-100 mb-3">
+                  <i class="bx bx-book-open me-1"></i> Baca Buku Online
+                </a>
+              @else
+                <button class="btn btn-outline-secondary w-100 mb-3" disabled title="Pinjam buku ini terlebih dahulu untuk membaca online">
+                  <i class="bx bx-lock-alt me-1"></i> Baca Online (Terkunci)
+                </button>
+              @endif
+            @endif
+
+            @if(!auth()->user()->isAdmin())
+              <hr>
+              @php
+                $existingLoan = auth()->user()->loans()->where('book_id', $book->id)->whereIn('status', ['pending', 'approved'])->first();
+              @endphp
+
+              @if($existingLoan)
+                <div class="alert alert-info py-2 px-3 small mb-0" role="alert">
+                  @if($existingLoan->status === 'pending')
+                    <i class="bx bx-time-five me-1"></i> Pengajuan peminjaman sedang diproses.
+                  @else
+                    <i class="bx bx-check-circle me-1"></i> Anda sedang meminjam buku ini.
+                  @endif
+                </div>
+              @elseif($book->stock > 0)
+                <form action="{{ route('loans.borrow', $book) }}" method="POST" onsubmit="return confirm('Ajukan peminjaman untuk buku ini?')">
+                  @csrf
+                  <button type="submit" class="btn btn-primary w-100">
+                    <i class="bx bx-bookmark-plus me-1"></i> Ajukan Peminjaman
+                  </button>
+                </form>
+              @else
+                <button class="btn btn-secondary w-100" disabled>Stok Habis</button>
+              @endif
+            @endif
           </div>
         </div>
       </div>

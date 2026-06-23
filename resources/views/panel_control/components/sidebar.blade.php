@@ -52,46 +52,12 @@
       </ul>
     </li>
 
-    @if ($isAdmin)
-      <!-- Peminjaman -->
-      <li class="menu-item">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-          <i class="menu-icon tf-icons bx bx-transfer"></i>
-          <div data-i18n="Peminjaman">Peminjaman</div>
-        </a>
-        <ul class="menu-sub">
-          <li class="menu-item">
-            <a href="#" class="menu-link">
-              <div data-i18n="Daftar Peminjaman">Daftar Peminjaman</div>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="#" class="menu-link">
-              <div data-i18n="Tambah Peminjaman">Tambah Peminjaman</div>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="#" class="menu-link">
-              <div data-i18n="Pengembalian">Pengembalian</div>
-            </a>
-          </li>
-        </ul>
-      </li>
-    @endif
-
-    <!-- Riwayat -->
-    <li class="menu-item">
-      <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-history"></i>
-        <div data-i18n="Riwayat">Riwayat</div>
+    <!-- Peminjaman -->
+    <li class="menu-item {{ Route::is('loans.*') ? 'active' : '' }}">
+      <a href="{{ route('loans.index') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-transfer"></i>
+        <div data-i18n="Peminjaman">{{ $isAdmin ? 'Daftar Peminjaman' : 'Peminjaman Saya' }}</div>
       </a>
-      <ul class="menu-sub">
-        <li class="menu-item">
-          <a href="#" class="menu-link">
-            <div data-i18n="Riwayat Peminjaman">Riwayat Peminjaman</div>
-          </a>
-        </li>
-      </ul>
     </li>
 
     @if ($isAdmin)

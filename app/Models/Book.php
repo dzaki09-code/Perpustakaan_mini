@@ -27,4 +27,8 @@ class Book extends Model
             'stock' => 'integer',
         ];
     }
+    public function loans()
+    {
+    return $this->hasMany(Loan::class);
+    }
 }

@@ -40,7 +40,10 @@ Route::middleware('auth')->group(function () {
         Route::patch('/loans/{loan}/return', [LoanController::class, 'returnBook'])->name('loans.return');
     });
 
+    Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
+
     // Peminjaman buku
     Route::get('/loans', [LoanController::class, 'index'])->name('loans.index');
     Route::post('/books/{book}/borrow', [LoanController::class, 'borrow'])->name('loans.borrow');
+
 });

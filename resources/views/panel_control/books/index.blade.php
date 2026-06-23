@@ -85,6 +85,7 @@
               @if ($isAdmin)
                 <td>
                   <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ route('books.show', $book) }}" class="btn btn-sm btn-info">Detail</a>
                     <a href="{{ route('books.edit', $book) }}" class="btn btn-sm btn-warning">Edit</a>
                     <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('Hapus data buku ini?')">
                       @csrf
@@ -92,6 +93,10 @@
                       <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
                     </form>
                   </div>
+                </td>
+              @else
+                <td>
+                  <a href="{{ route('books.show', $book) }}" class="btn btn-sm btn-info">Detail</a>
                 </td>
               @endif
             </tr>

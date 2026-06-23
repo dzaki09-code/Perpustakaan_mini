@@ -6,13 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->foreignId('book_id')
+                ->constrained()
+                ->cascadeOnDelete();
+            $table->date('borrow_date');
+            $table->date('return_date')
+                ->nullable();
+            $table->enum('status', [
+                'pending',
+                'approved',
+                'returned',
+                'rejected'
+            ])->default('pending');
             $table->timestamps();
         });
     }
@@ -22,30 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::create('loans', function (Blueprint $table) {
-    $table->id();
-
-    $table->foreignId('user_id')
-        ->constrained()
-        ->cascadeOnDelete();
-
-    $table->foreignId('book_id')
-        ->constrained()
-        ->cascadeOnDelete();
-
-    $table->date('borrow_date');
-
-    $table->date('return_date')
-        ->nullable();
-
-    $table->enum('status', [
-        'pending',
-        'approved',
-        'returned',
-        'rejected'
-    ])->default('pending');
-
-    $table->timestamps();
-});
+        Schema::dropIfExists('loans');
     }
 };

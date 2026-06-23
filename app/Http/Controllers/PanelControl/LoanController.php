@@ -96,4 +96,24 @@ class LoanController extends Controller
             ->back()
             ->with('success', 'Buku berhasil dikembalikan.');
     }
+
+    /**
+     * Menampilkan detail peminjaman.
+     */
+    public function show(Loan $loan): View
+    {
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
+            abort(403);
+        }
+
+        if (!$user->isAdmin() && $loan->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $loan->load(['user', 'book']);
+
+        return view('panel_control.loans.show', compact('loan'));
+    }
 }

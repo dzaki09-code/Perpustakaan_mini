@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
 
     // Peminjaman buku
     Route::get('/loans', [LoanController::class, 'index'])->name('loans.index');
+    Route::get('/loans/{loan}', [LoanController::class, 'show'])->name('loans.show');
     Route::post('/books/{book}/borrow', [LoanController::class, 'borrow'])->name('loans.borrow');
 
 });

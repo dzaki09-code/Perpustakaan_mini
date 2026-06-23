@@ -71,12 +71,22 @@
     @endif
 
     <!-- Riwayat -->
-    <li class="menu-item {{ Route::is('loans.history') ? 'active' : '' }}">
-      <a href="{{ route('loans.history') }}" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-history"></i>
-        <div>Riwayat</div>
-      </a>
-    </li>
+    @if(auth()->user()->isAdmin())
+      <li class="menu-item {{ Route::is('loans.history') ? 'active' : '' }}">
+        <a href="{{ route('loans.history') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-history"></i>
+          <div>Riwayat</div>
+        </a>
+      </li>
+    @endif
+    @if(auth()->user()->isUser())
+      <li class="menu-item {{ Route::is('loans.history') ? 'active' : '' }}">
+        <a href="{{ route('loans.history') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-history"></i>
+          <div>Riwayat Peminjaman Saya</div>
+        </a>
+      </li>
+    @endif
 
     @if ($isAdmin)
       <!-- Pengguna -->

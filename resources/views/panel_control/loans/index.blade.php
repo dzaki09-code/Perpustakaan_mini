@@ -61,7 +61,7 @@
       <table class="table table-hover">
         <thead>
           <tr class="table-light">
-            <th>#</th>
+            <th>No</th>
             @if ($isAdmin)
               <th>Peminjam</th>
             @endif

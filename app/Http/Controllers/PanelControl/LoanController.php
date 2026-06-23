@@ -29,7 +29,9 @@ class LoanController extends Controller
             abort(403);
         }
 
-        $query = Loan::with(['book', 'user'])->latest();
+        $query = Loan::with(['book', 'user'])
+            ->whereIn('status', ['pending', 'approved'])
+            ->latest();
 
         if (! $user->isAdmin()) {
             $query->where('user_id', $user->id);

@@ -45,7 +45,7 @@
               value="{{ request('q') }}"
             />
           </div>
-          <div class="col-md-3 d-grid gap-2 d-md-flex justify-content-md-end">
+          <div class="col-md-3 d-flex gap-2 justify-content-end align-items-end">
             <button type="submit" class="btn btn-outline-primary">
               <i class="bx bx-search me-1"></i>Cari
             </button>

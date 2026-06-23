@@ -45,7 +45,7 @@
               value="{{ request('q') }}"
             />
           </div>
-          <div class="col-md-3 d-grid gap-2 d-md-flex justify-content-md-end">
+          <div class="col-md-3 d-flex gap-2 justify-content-end align-items-end">
             <button type="submit" class="btn btn-outline-primary">
               <i class="bx bx-search me-1"></i>Cari
             </button>
@@ -159,6 +159,16 @@
                         </button>
                       </form>
                     @endif
+                  @endif
+
+                  @if (! $isAdmin && $loan->status === 'approved')
+                    <form action="{{ route('loans.return', $loan) }}" method="POST" onsubmit="return confirm('Konfirmasi pengembalian buku ini?')">
+                      @csrf
+                      @method('PATCH')
+                      <button type="submit" class="btn btn-sm btn-info">
+                        <i class="bx bx-undo me-1"></i>Kembalikan Buku
+                      </button>
+                    </form>
                   @endif
                 </div>
               </td>

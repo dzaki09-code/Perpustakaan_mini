@@ -96,6 +96,17 @@ class LoanController extends Controller
      */
     public function returnBook(Loan $loan): RedirectResponse
     {
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
+            abort(403);
+        }
+
+        // Hanya admin atau peminjam yang boleh menandai sebagai dikembalikan
+        if (! $user->isAdmin() && $loan->user_id !== $user->id) {
+            abort(403);
+        }
+
         $this->loanService->returnBook($loan);
 
         return redirect()

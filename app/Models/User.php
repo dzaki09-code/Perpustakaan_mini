@@ -86,4 +86,8 @@ class User extends Authenticatable
             default => 'success',
         };
     }
+    public function loans()
+    {
+    return $this->hasMany(Loan::class);
+    }
 }

@@ -34,4 +34,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::patch('/users/{user}/status', [UserController::class, 'updateStatus'])->name('users.update_status');
     });
+
+    Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 });

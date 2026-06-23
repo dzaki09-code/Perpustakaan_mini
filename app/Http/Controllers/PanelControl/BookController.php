@@ -10,6 +10,11 @@ use Illuminate\Validation\Rule;
 
 class BookController extends Controller
 {
+    public function show(Book $book)
+    {
+        return view('panel_control.books.show', compact('book'));
+    }
+
     public function index(Request $request)
     {
         $books = Book::query()

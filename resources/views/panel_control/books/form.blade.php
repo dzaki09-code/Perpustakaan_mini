@@ -22,6 +22,7 @@
         @if ($mode === 'edit')
           @method('PUT')
         @endif
+        <input type="hidden" id="read_url" name="read_url" value="{{ old('read_url', $book->read_url) }}" />
 
         <div class="row g-3">
           <div class="col-md-8">
@@ -65,17 +66,15 @@
           </div>
 
           <div class="col-md-3">
-            <label for="isbn" class="form-label">ISBN</label>
-            <div class="input-group">
-              <input type="text" id="isbn" name="isbn" class="form-control @error('isbn') is-invalid @enderror" value="{{ old('isbn', $book->isbn) }}" />
-              <button type="button" id="openLibraryLookup" class="btn btn-outline-primary">
-                Cari Open Library
-              </button>
-            </div>
+            <label for="isbn" class="form-label">ISBN / ID Gutenberg</label>
+            <input type="text" id="isbn" name="isbn" class="form-control @error('isbn') is-invalid @enderror" value="{{ old('isbn', $book->isbn) }}" />
             @error('isbn')
               <div class="invalid-feedback">{{ $message }}</div>
             @enderror
-            <div class="form-text">Isi ISBN atau judul, lalu pilih salah satu hasil Open Library.</div>
+            <button type="button" id="openLibraryLookup" class="btn btn-outline-primary btn-sm w-100 mt-2">
+              <i class="bx bx-search-alt-2 me-1"></i>Cari Project Gutenberg
+            </button>
+            <div class="form-text mt-1">Isi ID Gutenberg atau judul, lalu cari buku online.</div>
           </div>
 
           <div class="col-md-2">
@@ -108,7 +107,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <div>
-            <h5 class="modal-title mb-0">Hasil Pencarian Open Library</h5>
+            <h5 class="modal-title mb-0">Hasil Pencarian Project Gutenberg</h5>
             <small class="text-muted">Pilih buku yang paling sesuai untuk mengisi form.</small>
           </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -137,6 +136,7 @@
       const categoryInput = document.getElementById('category');
       const isbnInput = document.getElementById('isbn');
       const descriptionInput = document.getElementById('description');
+      const readUrlInput = document.getElementById('read_url');
 
       if (!lookupButton) {
         return;
@@ -146,7 +146,7 @@
 
       const setButtonState = function (isLoading) {
         lookupButton.disabled = isLoading;
-        lookupButton.textContent = isLoading ? 'Mencari...' : 'Cari Open Library';
+        lookupButton.textContent = isLoading ? 'Mencari...' : 'Cari Project Gutenberg';
       };
 
       const renderResults = function (results) {
@@ -200,6 +200,7 @@
             if (book.category) categoryInput.value = book.category;
             if (book.isbn) isbnInput.value = book.isbn;
             if (book.description) descriptionInput.value = book.description;
+            if (readUrlInput) readUrlInput.value = book.read_url || '';
 
             modal.hide();
           });
@@ -222,11 +223,11 @@
         const title = titleInput.value.trim();
 
         if (!isbn && !title) {
-          alert('Isi ISBN atau judul buku terlebih dahulu.');
+          alert('Isi ID Gutenberg atau judul buku terlebih dahulu.');
           return;
         }
 
-        statusElement.textContent = 'Memuat hasil dari Open Library...';
+        statusElement.textContent = 'Memuat hasil dari Project Gutenberg...';
         resultsContainer.innerHTML = '';
         modal.show();
         setButtonState(true);
@@ -251,7 +252,7 @@
           const payload = await response.json();
 
           if (!response.ok) {
-            throw new Error(payload.message || 'Gagal mengambil data dari Open Library.');
+            throw new Error(payload.message || 'Gagal mengambil data dari Project Gutenberg.');
           }
 
           renderResults(payload.results || []);

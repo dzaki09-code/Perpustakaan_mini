@@ -52,53 +52,30 @@
       </ul>
     </li>
 
-    <li class="menu-item {{ Route::is('loans.*') ? 'active' : '' }}">
-      <a href="{{ route('loans.index') }}" class="menu-link">
-        <i class="menu-icon tf-icons bx bx-book"></i>
-        <div>Peminjaman</div>
-      </a>
-    </li>
-
-    @if ($isAdmin)
-      <!-- Peminjaman -->
-      <li class="menu-item">
-        <a href="javascript:void(0);" class="menu-link menu-toggle">
-          <i class="menu-icon tf-icons bx bx-transfer"></i>
-          <div data-i18n="Peminjaman">Peminjaman</div>
+    <!-- Peminjaman sesuai dengan role -->
+    @if(auth()->user()->isAdmin())
+      <li class="menu-item {{ Route::is('loans.index') ? 'active' : '' }}">
+        <a href="{{ route('loans.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-book-reader"></i>
+          <div>Peminjaman</div>
         </a>
-        <ul class="menu-sub">
-          <li class="menu-item">
-            <a href="#" class="menu-link">
-              <div data-i18n="Daftar Peminjaman">Daftar Peminjaman</div>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="#" class="menu-link">
-              <div data-i18n="Tambah Peminjaman">Tambah Peminjaman</div>
-            </a>
-          </li>
-          <li class="menu-item">
-            <a href="#" class="menu-link">
-              <div data-i18n="Pengembalian">Pengembalian</div>
-            </a>
-          </li>
-        </ul>
+      </li>
+    @endif
+    @if(auth()->user()->isUser())
+      <li class="menu-item {{ Route::is('loans.index') ? 'active' : '' }}">
+        <a href="{{ route('loans.index') }}" class="menu-link">
+          <i class="menu-icon tf-icons bx bx-book-reader"></i>
+          <div>Peminjaman Saya</div>
+        </a>
       </li>
     @endif
 
     <!-- Riwayat -->
-    <li class="menu-item">
-      <a href="javascript:void(0);" class="menu-link menu-toggle">
+    <li class="menu-item {{ Route::is('loans.history') ? 'active' : '' }}">
+      <a href="{{ route('loans.history') }}" class="menu-link">
         <i class="menu-icon tf-icons bx bx-history"></i>
-        <div data-i18n="Riwayat">Riwayat</div>
+        <div>Riwayat</div>
       </a>
-      <ul class="menu-sub">
-        <li class="menu-item">
-          <a href="#" class="menu-link">
-            <div data-i18n="Riwayat Peminjaman">Riwayat Peminjaman</div>
-          </a>
-        </li>
-      </ul>
     </li>
 
     @if ($isAdmin)

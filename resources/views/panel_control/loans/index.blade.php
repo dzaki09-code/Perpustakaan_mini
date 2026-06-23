@@ -1,185 +1,149 @@
 @extends('panel_control.components.main')
 
+@section('title', 'Daftar Peminjaman | Perpustakaan')
+
 @section('content')
+  @php
+    $isAdmin = auth()->user()?->isAdmin() ?? false;
+  @endphp
 
-@if(session('success'))
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h4 class="mb-1">{{ $isAdmin ? 'Manajemen Peminjaman Buku' : 'Peminjaman Saya' }}</h4>
+      <p class="text-muted mb-0">
+        {{ $isAdmin ? 'Kelola persetujuan pengajuan pinjaman dan proses pengembalian buku.' : 'Pantau daftar pengajuan peminjaman dan riwayat bacaan Anda.' }}
+      </p>
+    </div>
+  </div>
+
+  @if (session('success'))
     <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      {{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-@endif
+  @endif
 
-@if(session('error'))
+  @if (session('error'))
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      {{ session('error') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-@endif
+  @endif
 
-<div class="container-xxl flex-grow-1 container-p-y">
-
-    <div class="card">
-
-        <div class="card-header">
-            <h4 class="mb-0">
-                Data Peminjaman Buku
-            </h4>
-        </div>
-
-        <div class="card-body">
-
-            <div class="table-responsive">
-
-                <table class="table table-bordered">
-
-                    <thead>
-                        <tr>
-
-                            <th>No</th>
-
-                            @if(auth()->user()->isAdmin())
-                                <th>Peminjam</th>
-                            @endif
-
-                            <th>Buku</th>
-                            <th>Tanggal Pinjam</th>
-                            <th>Tanggal Kembali</th>
-                            <th>Status</th>
-
-                            @if(auth()->user()->isAdmin())
-                                <th>Aksi</th>
-                            @endif
-
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
-                        @forelse($loans as $loan)
-
-                        <tr>
-
-                            <td>
-                                {{ $loop->iteration }}
-                            </td>
-
-                            @if(auth()->user()->isAdmin())
-                            <td>
-                                {{ $loan->user->name }}
-                            </td>
-                            @endif
-
-                            <td>
-                                {{ $loan->book->title }}
-                            </td>
-
-                            <td>
-                                {{ $loan->borrow_date }}
-                            </td>
-
-                            <td>
-                                {{ $loan->return_date ?? '-' }}
-                            </td>
-
-                            <td>
-
-                                @if($loan->status == 'pending')
-                                    <span class="badge bg-warning">
-                                        Pending
-                                    </span>
-
-                                @elseif($loan->status == 'approved')
-                                    <span class="badge bg-primary">
-                                        Dipinjam
-                                    </span>
-
-                                @elseif($loan->status == 'returned')
-                                    <span class="badge bg-success">
-                                        Dikembalikan
-                                    </span>
-
-                                @else
-                                    <span class="badge bg-danger">
-                                        Ditolak
-                                    </span>
-                                @endif
-
-                            </td>
-
-                            @if(auth()->user()->isAdmin())
-
-                            <td>
-
-                                @if($loan->status == 'pending')
-
-                                    <form action="{{ route('loans.approve',$loan) }}"
-                                          method="POST"
-                                          class="d-inline">
-
-                                        @csrf
-                                        @method('PATCH')
-
-                                        <button class="btn btn-success btn-sm">
-                                            Approve
-                                        </button>
-
-                                    </form>
-
-                                    <form action="{{ route('loans.reject',$loan) }}"
-                                          method="POST"
-                                          class="d-inline">
-
-                                        @csrf
-                                        @method('PATCH')
-
-                                        <button class="btn btn-danger btn-sm">
-                                            Reject
-                                        </button>
-
-                                    </form>
-
-                                @elseif($loan->status == 'approved')
-
-                                    <form action="{{ route('loans.return',$loan) }}"
-                                          method="POST">
-
-                                        @csrf
-                                        @method('PATCH')
-
-                                        <button class="btn btn-warning btn-sm">
-                                            Return
-                                        </button>
-
-                                    </form>
-
-                                @endif
-
-                            </td>
-
-                            @endif
-
-                        </tr>
-
-                        @empty
-
-                        <tr>
-                            <td colspan="7" class="text-center">
-                                Belum ada data peminjaman
-                            </td>
-                        </tr>
-
-                        @endforelse
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-        </div>
-
+  <div class="card">
+    <div class="table-responsive text-nowrap">
+      <table class="table table-hover">
+        <thead>
+          <tr class="table-light">
+            <th>#</th>
+            @if ($isAdmin)
+              <th>Peminjam</th>
+            @endif
+            <th>Buku</th>
+            <th>Tanggal Pinjam</th>
+            <th>Tanggal Kembali</th>
+            <th>Status</th>
+            <th class="text-center">Aksi</th>
+          </tr>
+        </thead>
+        <tbody class="table-border-bottom-0">
+          @forelse ($loans as $index => $loan)
+            <tr>
+              <td>{{ $index + 1 }}</td>
+              @if ($isAdmin)
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="avatar avatar-sm me-2 bg-light rounded d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                      <i class="bx bx-user text-secondary"></i>
+                    </div>
+                    <div>
+                      <span class="fw-semibold d-block">{{ $loan->user?->name }}</span>
+                      <small class="text-muted">{{ $loan->user?->email }}</small>
+                    </div>
+                  </div>
+                </td>
+              @endif
+              <td>
+                <div class="d-flex align-items-center">
+                  <div class="avatar avatar-sm me-2 bg-light rounded d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                    <i class="bx bx-book text-secondary"></i>
+                  </div>
+                  <div>
+                    <span class="fw-semibold d-block text-truncate" style="max-width: 250px;" title="{{ $loan->book?->title }}">
+                      {{ $loan->book?->title }}
+                    </span>
+                    <small class="text-muted">{{ $loan->book?->author }}</small>
+                  </div>
+                </div>
+              </td>
+              <td>{{ \Carbon\Carbon::parse($loan->borrow_date)->format('d M Y') }}</td>
+              <td>
+                @if ($loan->return_date)
+                  {{ \Carbon\Carbon::parse($loan->return_date)->format('d M Y') }}
+                @else
+                  <span class="text-muted">-</span>
+                @endif
+              </td>
+              <td>
+                @php
+                  $statusBadge = match($loan->status) {
+                    'pending' => 'bg-label-warning',
+                    'approved' => 'bg-label-success',
+                    'returned' => 'bg-label-info',
+                    'rejected' => 'bg-label-danger',
+                    default => 'bg-label-secondary'
+                  };
+                  $statusLabel = match($loan->status) {
+                    'pending' => 'Menunggu Persetujuan',
+                    'approved' => 'Sedang Dipinjam',
+                    'returned' => 'Sudah Dikembalikan',
+                    'rejected' => 'Ditolak',
+                    default => $loan->status
+                  };
+                @endphp
+                <span class="badge {{ $statusBadge }}">{{ $statusLabel }}</span>
+              </td>
+              <td>
+                <div class="d-flex justify-content-center gap-2">
+                  <a href="{{ route('loans.show', $loan) }}" class="btn btn-sm btn-outline-primary">
+                    <i class="bx bx-info-circle me-1"></i>Detail
+                  </a>
+                  @if ($isAdmin)
+                    @if ($loan->status === 'pending')
+                      <form action="{{ route('loans.approve', $loan) }}" method="POST" onsubmit="return confirm('Setujui peminjaman buku ini?')">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-sm btn-success">
+                          <i class="bx bx-check me-1"></i>Setujui
+                        </button>
+                      </form>
+                      <form action="{{ route('loans.reject', $loan) }}" method="POST" onsubmit="return confirm('Tolak peminjaman buku ini?')">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-sm btn-danger">
+                          <i class="bx bx-x me-1"></i>Tolak
+                        </button>
+                      </form>
+                    @elseif ($loan->status === 'approved')
+                      <form action="{{ route('loans.return', $loan) }}" method="POST" onsubmit="return confirm('Konfirmasi pengembalian buku ini?')">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-sm btn-info">
+                          <i class="bx bx-undo me-1"></i>Kembalikan Buku
+                        </button>
+                      </form>
+                    @endif
+                  @endif
+                </div>
+              </td>
+            </tr>
+          @empty
+            <tr>
+              <td colspan="{{ $isAdmin ? 7 : 5 }}" class="text-center py-4 text-muted">Belum ada data transaksi peminjaman.</td>
+            </tr>
+          @endforelse
+        </tbody>
+      </table>
     </div>
-
-</div>
-
+  </div>
 @endsection

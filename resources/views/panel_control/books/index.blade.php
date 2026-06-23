@@ -88,21 +88,38 @@
                 <td>
                   <div class="d-flex justify-content-end gap-2">
                     @if ($isUser)
-                      <form action="{{ route('loans.borrow', $book) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-primary btn-sm">Pinjam</button>
-                      </form>
+                        <form action="{{ route('loans.borrow', $book) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                Pinjam
+                            </button>
+                        </form>
                     @endif
 
                     @if ($isAdmin)
-                      <a href="{{ route('books.edit', $book) }}" class="btn btn-sm btn-warning">Edit</a>
-                      <form action="{{ route('books.destroy', $book) }}" method="POST" onsubmit="return confirm('Hapus data buku ini?')">
+                        <a href="{{ route('books.show', $book) }}" class="btn btn-sm btn-info">
+                            Detail
+                        </a>
+
+                        <a href="{{ route('books.edit', $book) }}" class="btn btn-sm btn-warning">
+                            Edit
+                        </a>
+
+                        <form action="{{ route('books.destroy', $book) }}"
+                            method="POST"
+                            onsubmit="return confirm('Hapus data buku ini?')">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                      </form>
+                        <button type="submit" class="btn btn-sm btn-danger">
+                            Hapus
+                        </button>
+                        </form>
                     @endif
                   </div>
+                </td>
+              @else
+                <td>
+                  <a href="{{ route('books.show', $book) }}" class="btn btn-sm btn-info">Detail</a>
                 </td>
               @endif
             </tr>

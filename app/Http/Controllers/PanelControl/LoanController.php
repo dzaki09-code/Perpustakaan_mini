@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PanelControl;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Loan;
+use App\Models\User;
 use App\Services\LoanService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,10 @@ class LoanController extends Controller
     public function index(): View
     {
         $user = Auth::user();
+
+        if (! $user instanceof User) {
+            abort(403);
+        }
 
         if ($user->isAdmin()) {
             $loans = Loan::with([

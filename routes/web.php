@@ -34,13 +34,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::patch('/users/{user}/status', [UserController::class, 'updateStatus'])->name('users.update_status');
 
-    //Peminjaman buku
+        // Manajemen peminjaman
+        Route::patch('/loans/{loan}/approve', [LoanController::class, 'approve'])->name('loans.approve');
+        Route::patch('/loans/{loan}/reject', [LoanController::class, 'reject'])->name('loans.reject');
+        Route::patch('/loans/{loan}/return', [LoanController::class, 'returnBook'])->name('loans.return');
+    });
+
+    // Peminjaman buku
     Route::get('/loans', [LoanController::class, 'index'])->name('loans.index');
     Route::post('/books/{book}/borrow', [LoanController::class, 'borrow'])->name('loans.borrow');
-
-    //Manajemen peminjaman
-    Route::patch('/loans/{loan}/approve', [LoanController::class, 'approve'])->name('loans.approve');
-    Route::patch('/loans/{loan}/reject', [LoanController::class, 'reject'])->name('loans.reject');
-    Route::patch('/loans/{loan}/return', [LoanController::class, 'returnBook'])->name('loans.return');
-    });
 });

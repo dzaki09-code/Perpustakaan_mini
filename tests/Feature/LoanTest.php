@@ -167,4 +167,111 @@ class LoanTest extends TestCase
         $book->refresh();
         $this->assertEquals(6, $book->stock); // incremented back
     }
+
+    public function test_owner_can_view_loan_details()
+    {
+        $user = User::create([
+            'name' => 'Member User',
+            'email' => 'member@example.com',
+            'password' => bcrypt('password'),
+            'role' => User::ROLE_USER,
+            'status' => User::STATUS_ACTIVE,
+        ]);
+
+        $book = Book::create([
+            'title' => 'Test Book',
+            'author' => 'Author Name',
+            'stock' => 5,
+        ]);
+
+        $loan = Loan::create([
+            'user_id' => $user->id,
+            'book_id' => $book->id,
+            'borrow_date' => now(),
+            'status' => 'pending',
+        ]);
+
+        $response = $this->actingAs($user)
+            ->get(route('loans.show', $loan));
+
+        $response->assertOk();
+        $response->assertSee('Detail Transaksi Peminjaman');
+        $response->assertSee($book->title);
+    }
+
+    public function test_admin_can_view_any_loan_details()
+    {
+        $admin = User::create([
+            'name' => 'Admin User',
+            'email' => 'admin@example.com',
+            'password' => bcrypt('password'),
+            'role' => User::ROLE_ADMIN,
+            'status' => User::STATUS_ACTIVE,
+        ]);
+
+        $user = User::create([
+            'name' => 'Member User',
+            'email' => 'member@example.com',
+            'password' => bcrypt('password'),
+            'role' => User::ROLE_USER,
+            'status' => User::STATUS_ACTIVE,
+        ]);
+
+        $book = Book::create([
+            'title' => 'Test Book',
+            'author' => 'Author Name',
+            'stock' => 5,
+        ]);
+
+        $loan = Loan::create([
+            'user_id' => $user->id,
+            'book_id' => $book->id,
+            'borrow_date' => now(),
+            'status' => 'pending',
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->get(route('loans.show', $loan));
+
+        $response->assertOk();
+        $response->assertSee('Detail Transaksi Peminjaman');
+        $response->assertSee($book->title);
+    }
+
+    public function test_other_users_cannot_view_loan_details()
+    {
+        $otherUser = User::create([
+            'name' => 'Other User',
+            'email' => 'other@example.com',
+            'password' => bcrypt('password'),
+            'role' => User::ROLE_USER,
+            'status' => User::STATUS_ACTIVE,
+        ]);
+
+        $user = User::create([
+            'name' => 'Member User',
+            'email' => 'member@example.com',
+            'password' => bcrypt('password'),
+            'role' => User::ROLE_USER,
+            'status' => User::STATUS_ACTIVE,
+        ]);
+
+        $book = Book::create([
+            'title' => 'Test Book',
+            'author' => 'Author Name',
+            'stock' => 5,
+        ]);
+
+        $loan = Loan::create([
+            'user_id' => $user->id,
+            'book_id' => $book->id,
+            'borrow_date' => now(),
+            'status' => 'pending',
+        ]);
+
+        $response = $this->actingAs($otherUser)
+            ->get(route('loans.show', $loan));
+
+        $response->assertStatus(403);
+    }
 }

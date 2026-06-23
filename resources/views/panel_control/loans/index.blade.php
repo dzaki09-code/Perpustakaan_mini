@@ -43,9 +43,7 @@
             <th>Tanggal Pinjam</th>
             <th>Tanggal Kembali</th>
             <th>Status</th>
-            @if ($isAdmin)
-              <th class="text-center">Aksi</th>
-            @endif
+            <th class="text-center">Aksi</th>
           </tr>
         </thead>
         <tbody class="table-border-bottom-0">
@@ -105,9 +103,12 @@
                 @endphp
                 <span class="badge {{ $statusBadge }}">{{ $statusLabel }}</span>
               </td>
-              @if ($isAdmin)
-                <td>
-                  <div class="d-flex justify-content-center gap-2">
+              <td>
+                <div class="d-flex justify-content-center gap-2">
+                  <a href="{{ route('loans.show', $loan) }}" class="btn btn-sm btn-outline-primary">
+                    <i class="bx bx-info-circle me-1"></i>Detail
+                  </a>
+                  @if ($isAdmin)
                     @if ($loan->status === 'pending')
                       <form action="{{ route('loans.approve', $loan) }}" method="POST" onsubmit="return confirm('Setujui peminjaman buku ini?')">
                         @csrf
@@ -131,12 +132,10 @@
                           <i class="bx bx-undo me-1"></i>Kembalikan Buku
                         </button>
                       </form>
-                    @else
-                      <span class="text-muted">-</span>
                     @endif
-                  </div>
-                </td>
-              @endif
+                  @endif
+                </div>
+              </td>
             </tr>
           @empty
             <tr>

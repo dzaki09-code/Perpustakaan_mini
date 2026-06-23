@@ -26,14 +26,25 @@
         </div>
       @endif
 
-      <form method="GET" action="{{ route('users.index') }}" class="d-flex flex-wrap gap-2">
-        <div class="input-group input-group-merge" style="max-width: 320px;">
-          <span class="input-group-text"><i class="bx bx-search"></i></span>
-          <input type="text" name="q" class="form-control" placeholder="Cari pengguna" value="{{ request('q') }}" />
+      <form method="GET" action="{{ route('users.index') }}" class="row g-3 align-items-end" style="width:100%; max-width:720px;">
+        <div class="col-md-9">
+          <label for="searchUser" class="form-label">Cari pengguna</label>
+          <input
+            type="text"
+            id="searchUser"
+            name="q"
+            class="form-control"
+            placeholder="Nama, email, role, atau status"
+            value="{{ request('q') }}"
+          />
         </div>
-        <button type="submit" class="btn btn-outline-primary">Cari</button>
-        <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">Reset</a>
-      </form> 
+        <div class="col-md-3 d-flex gap-2 justify-content-end align-items-end">
+          <button type="submit" class="btn btn-outline-primary">
+            <i class="bx bx-search me-2"></i>Cari
+          </button>
+          <a href="{{ route('users.index') }}" class="btn btn-outline-secondary">Reset</a>
+        </div>
+      </form>
     </div>
 
     <div class="table-responsive text-nowrap">

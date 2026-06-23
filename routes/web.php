@@ -37,13 +37,16 @@ Route::middleware('auth')->group(function () {
         // Manajemen peminjaman
         Route::patch('/loans/{loan}/approve', [LoanController::class, 'approve'])->name('loans.approve');
         Route::patch('/loans/{loan}/reject', [LoanController::class, 'reject'])->name('loans.reject');
-        Route::patch('/loans/{loan}/return', [LoanController::class, 'returnBook'])->name('loans.return');
     });
 
     Route::get('/books/{book}', [BookController::class, 'show'])->name('books.show');
 
+    // Route return accessible for owner or admin (controller enforces permissions)
+    Route::patch('/loans/{loan}/return', [LoanController::class, 'returnBook'])->name('loans.return');
+
     // Peminjaman buku
     Route::get('/loans', [LoanController::class, 'index'])->name('loans.index');
+    Route::get('/loans/history', [LoanController::class, 'history'])->name('loans.history');
     Route::get('/loans/{loan}', [LoanController::class, 'show'])->name('loans.show');
     Route::post('/books/{book}/borrow', [LoanController::class, 'borrow'])->name('loans.borrow');
 

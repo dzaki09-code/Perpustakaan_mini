@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PanelControl;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Validation\Rule;
 
@@ -83,7 +84,7 @@ class BookController extends Controller
             'title' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $isbn = isset($data['isbn']) ? preg_replace('/[^0-9]/', '', $data['isbn']) : null;
+        $isbn = isset($data['isbn']) ? strtoupper(preg_replace('/[^0-9Xx]/', '', $data['isbn'])) : null;
         $title = trim($data['title'] ?? '');
 
         if ($isbn === '' || $isbn === null) {
@@ -96,17 +97,15 @@ class BookController extends Controller
 
         if (! $isbn && ! $title) {
             return response()->json([
-                'message' => 'Isi ID Gutenberg atau judul buku terlebih dahulu.',
+                'message' => 'Isi ISBN atau judul buku terlebih dahulu.',
             ], 422);
         }
 
-        $results = $isbn
-            ? $this->searchGutenbergById($isbn)
-            : $this->searchGutenbergByQuery($title);
+        $results = $this->searchOpenLibrary($isbn, $title);
 
         if (empty($results)) {
             return response()->json([
-                'message' => 'Data buku tidak ditemukan di Project Gutenberg.',
+                'message' => 'Data buku tidak ditemukan di Open Library.',
             ], 404);
         }
 
@@ -131,123 +130,107 @@ class BookController extends Controller
             ],
             'stock' => ['required', 'integer', 'min:0'],
             'description' => ['nullable', 'string'],
-            'read_url' => ['nullable', 'string', 'max:2048'],
+            'cover_url' => ['nullable', 'url', 'max:2048'],
         ]);
     }
 
-    private function searchGutenbergById(string $id): array
+    private function searchOpenLibrary(?string $isbn, ?string $title): array
     {
-        try {
-            $response = Http::withoutVerifying()->timeout(10)->get('https://gutendex.com/books/', [
-                'ids' => $id,
-            ]);
-        } catch (\Throwable $th) {
-            return [];
-        }
+        $fetchBooks = function () use ($isbn, $title) {
+            try {
+                $baseUrl = rtrim(config('services.open_library.base_url') ?: 'https://openlibrary.org', '/');
+                $http = Http::timeout((int) config('services.open_library.timeout', 10));
 
-        if (! $response->successful()) {
-            return [];
-        }
-
-        $books = $response->json('results') ?? [];
-
-        return collect($books)
-            ->map(fn (array $book) => $this->formatGutenbergBook($book))
-            ->all();
-    }
-
-    private function searchGutenbergByQuery(string $query): array
-    {
-        try {
-            $response = Http::withoutVerifying()->timeout(10)->get('https://gutendex.com/books/', [
-                'search' => $query,
-            ]);
-        } catch (\Throwable $th) {
-            return [];
-        }
-
-        if (! $response->successful()) {
-            return [];
-        }
-
-        $books = $response->json('results') ?? [];
-
-        return collect($books)
-            ->take(5)
-            ->map(fn (array $book) => $this->formatGutenbergBook($book))
-            ->all();
-    }
-
-    private function formatGutenbergBook(array $book): array
-    {
-        $id = data_get($book, 'id');
-        
-        $authors = data_get($book, 'authors') ?? [];
-        $authorName = 'Unknown Author';
-        if (!empty($authors)) {
-            $rawName = data_get($authors[0], 'name', 'Unknown Author');
-            if (str_contains($rawName, ',')) {
-                $parts = explode(',', $rawName);
-                $authorName = trim($parts[1]) . ' ' . trim($parts[0]);
-            } else {
-                $authorName = $rawName;
-            }
-        }
-
-        $formats = data_get($book, 'formats') ?? [];
-        $readUrl = null;
-        foreach ($formats as $mime => $url) {
-            if (str_contains($mime, 'text/html') || str_contains($mime, 'html')) {
-                $readUrl = $url;
-                break;
-            }
-        }
-        if (!$readUrl) {
-            foreach ($formats as $mime => $url) {
-                if (str_contains($mime, 'text/plain') || str_contains($mime, 'text')) {
-                    $readUrl = $url;
-                    break;
+                if (! config('services.open_library.verify_ssl', true)) {
+                    $http = $http->withoutVerifying();
                 }
+
+                $response = $http->get($baseUrl . '/search.json', array_filter([
+                'isbn' => $isbn,
+                'title' => $isbn ? null : $title,
+                'fields' => implode(',', [
+                    'key',
+                    'title',
+                    'author_name',
+                    'first_publish_year',
+                    'publisher',
+                    'publish_year',
+                    'isbn',
+                    'subject',
+                    'cover_i',
+                ]),
+                'limit' => 5,
+                ], fn ($value) => $value !== null && $value !== ''));
+            } catch (\Throwable $th) {
+                return [];
             }
+
+            if (! $response->successful()) {
+                return [];
+            }
+
+            $books = $response->json('docs') ?? [];
+
+            return collect($books)
+                ->map(fn (array $book) => $this->formatOpenLibraryBook($book, $isbn))
+                ->filter(fn (array $book) => ! empty($book['title']))
+                ->values()
+                ->all();
+        };
+
+        $cacheTtl = (int) config('services.open_library.cache_ttl', 0);
+
+        if ($cacheTtl <= 0) {
+            return $fetchBooks();
         }
 
-        $category = data_get($book, 'bookshelves.0') ?? data_get($book, 'subjects.0') ?? 'Sastra';
-        if (str_contains($category, '--')) {
-            $category = trim(explode('--', $category)[0]);
-        }
+        try {
+            $cacheKey = 'open_library:search:' . md5(json_encode([$isbn, $title]));
 
-        $subjects = data_get($book, 'subjects') ?? [];
-        $languages = data_get($book, 'languages') ?? [];
-        $desc = 'Karya sastra klasik bebas hak cipta dari Project Gutenberg.';
-        if (!empty($subjects)) {
-            $desc .= ' Subjek: ' . implode(', ', $subjects) . '.';
+            return Cache::store(config('services.open_library.cache_store'))->remember($cacheKey, $cacheTtl, $fetchBooks);
+        } catch (\Throwable $th) {
+            return $fetchBooks();
         }
-        if (!empty($languages)) {
-            $desc .= ' Bahasa: ' . strtoupper(implode(', ', $languages)) . '.';
+    }
+
+    private function formatOpenLibraryBook(array $book, ?string $searchedIsbn = null): array
+    {
+        $subjects = data_get($book, 'subject') ?? [];
+        $isbnList = data_get($book, 'isbn') ?? [];
+        $publisher = data_get($book, 'publisher.0');
+        $category = $subjects[0] ?? 'Umum';
+        $description = 'Data buku dari Open Library.';
+        $coverId = data_get($book, 'cover_i');
+
+        if (! empty($subjects)) {
+            $description .= ' Subjek: ' . implode(', ', array_slice($subjects, 0, 5)) . '.';
         }
 
         return [
             'title' => data_get($book, 'title'),
-            'author' => $authorName,
-            'publisher' => 'Project Gutenberg',
-            'publication_year' => null,
+            'author' => implode(', ', data_get($book, 'author_name') ?? []) ?: 'Unknown Author',
+            'publisher' => $publisher ?: 'Open Library',
+            'publication_year' => data_get($book, 'first_publish_year'),
             'category' => substr($category, 0, 50),
-            'isbn' => 'GUTENBERG-' . $id,
-            'description' => $desc,
-            'read_url' => $readUrl,
+            'isbn' => $this->preferredIsbn($isbnList, $searchedIsbn),
+            'description' => $description,
+            'cover_url' => $coverId ? "https://covers.openlibrary.org/b/id/{$coverId}-L.jpg" : null,
         ];
     }
 
-    private function extractYear(?string $value): ?int
+    private function preferredIsbn(array $isbnList, ?string $searchedIsbn = null): ?string
     {
-        if (! $value) {
-            return null;
+        $normalizedIsbnList = collect($isbnList)
+            ->map(fn (string $isbn) => strtoupper(preg_replace('/[^0-9Xx]/', '', $isbn)))
+            ->filter()
+            ->values();
+
+        if ($searchedIsbn && $normalizedIsbnList->contains($searchedIsbn)) {
+            return $searchedIsbn;
         }
 
-        if (preg_match('/(\d{4})/', $value, $matches) !== 1) {
-            return null;
-        }
-
-        return (int) $matches[1];
+        return $normalizedIsbnList
+            ->sortByDesc(fn (string $isbn) => strlen($isbn))
+            ->first();
     }
 }

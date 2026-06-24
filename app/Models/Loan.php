@@ -10,8 +10,15 @@ class Loan extends Model
         'user_id',
         'book_id',
         'borrow_date',
+        'due_date',
         'return_date',
         'status'
+    ];
+
+    protected $casts = [
+        'borrow_date' => 'date',
+        'due_date' => 'date',
+        'return_date' => 'date',
     ];
 
     public function user()

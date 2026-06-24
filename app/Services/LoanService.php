@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 
 class LoanService
 {
+    private const LOAN_DURATION_DAYS = 7;
+
     public function createLoan($bookId)
     {
         $book = Book::findOrFail($bookId);
@@ -20,6 +22,7 @@ class LoanService
             'user_id' => Auth::id(),
             'book_id' => $bookId,
             'borrow_date' => now(),
+            'due_date' => now()->addDays(self::LOAN_DURATION_DAYS),
             'status' => 'pending'
         ]);
     }

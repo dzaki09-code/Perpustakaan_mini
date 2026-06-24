@@ -109,7 +109,7 @@
                         {{ __('deactivate') }}
                       </button>
                     </form>
-                    <form action="{{ route('users.update_status', $user) }}" method="POST" onsubmit="return confirm('{{ __('blockConfirm') }}')">
+                    <form action="{{ route('users.update_status', $user) }}" method="POST">
                       @csrf
                       @method('PATCH')
                       <input type="hidden" name="status" value="blocked" />

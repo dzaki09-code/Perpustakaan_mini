@@ -195,7 +195,7 @@ class LoanTest extends TestCase
             ->get(route('loans.show', $loan));
 
         $response->assertOk();
-        $response->assertSee('Detail Transaksi Peminjaman');
+        $response->assertSee(__('loanDetail'));
         $response->assertSee($book->title);
     }
 
@@ -234,7 +234,7 @@ class LoanTest extends TestCase
             ->get(route('loans.show', $loan));
 
         $response->assertOk();
-        $response->assertSee('Detail Transaksi Peminjaman');
+        $response->assertSee(__('loanDetail'));
         $response->assertSee($book->title);
     }
 

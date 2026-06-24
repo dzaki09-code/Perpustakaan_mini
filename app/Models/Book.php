@@ -18,7 +18,7 @@ class Book extends Model
         'isbn',
         'stock',
         'description',
-        'read_url',
+        'cover_url',
     ];
 
     protected function casts(): array

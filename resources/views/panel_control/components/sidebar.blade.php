@@ -105,24 +105,5 @@
       </li>
     @endif
 
-    <!-- Akun -->
-    <li class="menu-item">
-      <a href="javascript:void(0);" class="menu-link menu-toggle">
-        <i class="menu-icon tf-icons bx bx-user-circle"></i>
-        <div>{{ __('accountNav') }}</div>
-      </a>
-      <ul class="menu-sub">
-        <li class="menu-item">
-          <a href="#" class="menu-link">
-            <div>{{ __('profileNav') }}</div>
-          </a>
-        </li>
-        <li class="menu-item">
-          <a href="{{ route('signout') }}" class="menu-link">
-            <div>{{ __('logoutNav') }}</div>
-          </a>
-        </li>
-      </ul>
-    </li>
   </ul>
 </aside>

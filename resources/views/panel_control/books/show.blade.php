@@ -26,80 +26,85 @@
   </div>
 
   <div class="card">
-    <div class="card-body">
+    <div class="card-body p-4">
       <div class="row g-4">
-        <div class="col-lg-8">
-          <h5 class="mb-3">{{ $book->title }}</h5>
-          <div class="table-responsive">
-            <table class="table table-borderless mb-0">
-              <tbody>
-                <tr>
-                  <th style="width: 220px;">{{ __('author') }}</th>
-                  <td>{{ $book->author }}</td>
-                </tr>
-                <tr>
-                  <th>{{ __('publisher') }}</th>
-                  <td>{{ $book->publisher ?: '-' }}</td>
-                </tr>
-                <tr>
-                  <th>{{ __('year') }}</th>
-                  <td>{{ $book->publication_year ?: '-' }}</td>
-                </tr>
-                <tr>
-                  <th>{{ __('category') }}</th>
-                  <td>{{ $book->category ?: '-' }}</td>
-                </tr>
-                <tr>
-                  <th>{{ __('isbn') }}</th>
-                  <td>{{ $book->isbn ?: '-' }}</td>
-                </tr>
-                <tr>
-                  <th>{{ __('stock') }}</th>
-                  <td>{{ $book->stock }}</td>
-                </tr>
-                <tr>
-                  <th>{{ __('description') }}</th>
-                  <td>{{ $book->description ?: '-' }}</td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="col-xl-9">
+          <div class="bg-light rounded p-4">
+            <div class="row g-4 align-items-start">
+              <div class="col-md-4 text-center text-md-start">
+                @if($book->cover_url)
+                  <img
+                    src="{{ $book->cover_url }}"
+                    alt="{{ $book->title }}"
+                    class="img-fluid rounded border shadow-sm bg-white"
+                    style="width: 220px; aspect-ratio: 2 / 3; object-fit: cover;"
+                  >
+                @else
+                  <div class="rounded border bg-white d-inline-flex align-items-center justify-content-center text-muted" style="width: 220px; aspect-ratio: 2 / 3;">
+                    <i class="bx bx-book fs-1"></i>
+                  </div>
+                @endif
+              </div>
+
+              <div class="col-md-8">
+                <h4 class="mb-2 text-break">{{ $book->title }}</h4>
+                <p class="text-muted mb-3">{{ $book->author }}</p>
+
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                  <span class="badge bg-label-primary">{{ $book->category ?: __('category') }}</span>
+                  <span class="badge {{ $book->stock > 0 ? 'bg-label-success' : 'bg-label-secondary' }}">
+                    {{ $book->stock > 0 ? __('available') : __('outOfStock') }}
+                  </span>
+                </div>
+
+                <div class="table-responsive">
+                  <table class="table table-borderless mb-0">
+                    <tbody>
+                      <tr>
+                        <th class="ps-0 text-muted" style="width: 160px;">{{ __('publisher') }}</th>
+                        <td class="text-break">{{ $book->publisher ?: '-' }}</td>
+                      </tr>
+                      <tr>
+                        <th class="ps-0 text-muted">{{ __('year') }}</th>
+                        <td>{{ $book->publication_year ?: '-' }}</td>
+                      </tr>
+                      <tr>
+                        <th class="ps-0 text-muted">{{ __('category') }}</th>
+                        <td class="text-break">{{ $book->category ?: '-' }}</td>
+                      </tr>
+                      <tr>
+                        <th class="ps-0 text-muted">{{ __('isbn') }}</th>
+                        <td><code class="text-break">{{ $book->isbn ?: '-' }}</code></td>
+                      </tr>
+                      <tr>
+                        <th class="ps-0 text-muted">{{ __('stock') }}</th>
+                        <td>{{ $book->stock }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <h5 class="mb-3">{{ __('description') }}</h5>
+            <div class="rounded border p-3 bg-white" style="min-height: 150px;">
+              <p class="mb-0 text-break">{{ $book->description ?: '-' }}</p>
+            </div>
           </div>
         </div>
 
-        <div class="col-lg-4">
-          <div class="p-4 rounded bg-light h-100">
+        <div class="col-xl-3">
+          <div class="rounded border p-3 h-100">
             <h6 class="mb-3">{{ __('summary') }}</h6>
             <p class="mb-2"><strong>{{ __('added') }}:</strong> {{ $book->created_at?->format('d M Y H:i') ?? '-' }}</p>
             <p class="mb-2"><strong>{{ __('updated') }}:</strong> {{ $book->updated_at?->format('d M Y H:i') ?? '-' }}</p>
-            <p class="mb-3"><strong>{{ __('stockStatus') }}</strong> {{ $book->stock > 0 ? __('available') : __('outOfStock') }}</p>
-
-            @php
-              $currentUser = auth()->user();
-              $isAdmin = $currentUser?->isAdmin() ?? false;
-              $isLoanApproved = false;
-
-              if (!$isAdmin && $currentUser) {
-                  $isLoanApproved = $currentUser->loans()
-                      ->where('book_id', $book->id)
-                      ->where('status', 'approved')
-                      ->exists();
-              }
-            @endphp
-
-            @if($book->read_url)
-              @if($isAdmin || $isLoanApproved)
-                <a href="{{ $book->read_url }}" target="_blank" class="btn btn-primary w-100 mb-3">
-                  <i class="bx bx-book-open me-1"></i> {{ __('readBookOnline') }}
-                </a>
-              @else
-                <button class="btn btn-outline-secondary w-100 mb-3" disabled title="{{ __('getApprovalToRead') }}">
-                  <i class="bx bx-lock-alt me-1"></i> {{ __('readOnlineLocked') }}
-                </button>
-              @endif
-            @endif
+            <p class="mb-0"><strong>{{ __('stockStatus') }}</strong> {{ $book->stock > 0 ? __('available') : __('outOfStock') }}</p>
 
             @if(!auth()->user()->isAdmin())
               <hr>
+              <h6 class="mb-3">{{ __('actions') }}</h6>
               @php
                 $existingLoan = auth()->user()->loans()->where('book_id', $book->id)->whereIn('status', ['pending', 'approved'])->first();
               @endphp
@@ -113,7 +118,7 @@
                   @endif
                 </div>
               @elseif($book->stock > 0)
-                <form action="{{ route('loans.borrow', $book) }}" method="POST" onsubmit="return confirm('Ajukan peminjaman untuk buku ini?')">
+                <form action="{{ route('loans.borrow', $book) }}" method="POST">
                   @csrf
                   <button type="submit" class="btn btn-primary w-100">
                     <i class="bx bx-bookmark-plus me-1"></i> Ajukan Peminjaman

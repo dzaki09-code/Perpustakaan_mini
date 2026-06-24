@@ -5,6 +5,9 @@
 @section('content')
   @php
     $isAdmin = auth()->user()?->isAdmin() ?? false;
+    $borrowDate = \Carbon\Carbon::parse($loan->borrow_date);
+    $dueDate = $loan->due_date ? \Carbon\Carbon::parse($loan->due_date) : $borrowDate->copy()->addDays(7);
+    $loanDurationDays = $borrowDate->diffInDays($dueDate);
   @endphp
 
   <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
@@ -33,7 +36,7 @@
 
   <div class="row g-4">
     <!-- Kolom Utama: Informasi Peminjaman & Buku -->
-    <div class="col-lg-8">
+    <div class="{{ $isAdmin ? 'col-lg-8' : 'col-12' }}">
       <!-- Card Informasi Transaksi -->
       <div class="card mb-4">
         <div class="card-header d-flex justify-content-between align-items-center pb-2">
@@ -58,14 +61,22 @@
         </div>
         <div class="card-body">
           <div class="row g-3">
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label class="form-label text-muted small uppercase">{{ __('borrowDate') }}</label>
               <p class="fw-semibold mb-0 fs-5">
                 <i class="bx bx-calendar me-1 text-primary"></i>
-                {{ \Carbon\Carbon::parse($loan->borrow_date)->format('d M Y') }}
+                {{ $borrowDate->format('d M Y') }}
               </p>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
+              <label class="form-label text-muted small uppercase">{{ __('dueDate') }}</label>
+              <p class="fw-semibold mb-1 fs-5">
+                <i class="bx bx-calendar-exclamation me-1 text-warning"></i>
+                {{ $dueDate->format('d M Y') }}
+              </p>
+              <small class="text-muted">{{ __('loanDuration') }}: {{ __('loanDurationDays', ['count' => $loanDurationDays]) }}</small>
+            </div>
+            <div class="col-md-4">
               <label class="form-label text-muted small uppercase">{{ __('returnDate') }}</label>
               <p class="fw-semibold mb-0 fs-5">
                 <i class="bx bx-calendar-check me-1 text-success"></i>
@@ -86,11 +97,20 @@
           <h5 class="card-title mb-0">{{ __('bookDetail') }}</h5>
         </div>
         <div class="card-body">
-          <div class="d-flex align-items-start gap-4 mb-4">
-            <div class="avatar flex-shrink-0 bg-light rounded d-flex align-items-center justify-content-center text-primary" style="width: 64px; height: 64px;">
-              <i class="bx bx-book fs-1"></i>
-            </div>
-            <div>
+          <div class="d-flex flex-wrap align-items-start gap-4 mb-4">
+            @if($loan->book?->cover_url)
+              <img
+                src="{{ $loan->book->cover_url }}"
+                alt="{{ $loan->book?->title }}"
+                class="rounded border shadow-sm bg-white flex-shrink-0"
+                style="width: 96px; height: 144px; object-fit: cover;"
+              >
+            @else
+              <div class="rounded border bg-light d-flex align-items-center justify-content-center text-primary flex-shrink-0" style="width: 96px; height: 144px;">
+                <i class="bx bx-book fs-1"></i>
+              </div>
+            @endif
+            <div class="flex-grow-1" style="min-width: 220px;">
               <h4 class="mb-1 text-primary">{{ $loan->book?->title }}</h4>
               <p class="mb-2 text-muted fs-6">{{ __('author') }}: <strong class="text-dark">{{ $loan->book?->author }}</strong></p>
               <span class="badge bg-label-primary text-capitalize">{{ $loan->book?->category ?: __('other') }}</span>
@@ -124,8 +144,8 @@
     </div>
 
     <!-- Kolom Kanan: Peminjam & Tombol Aksi -->
-    <div class="col-lg-4">
-      @if ($isAdmin)
+    @if ($isAdmin)
+      <div class="col-lg-4">
         <!-- Card Peminjam (Hanya Admin) -->
         <div class="card mb-4">
           <div class="card-header pb-2">
@@ -149,42 +169,21 @@
             </p>
           </div>
         </div>
-      @endif
 
-      <!-- Card Ringkasan Baca Digital & Aksi -->
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title mb-3">{{ __('readDigitalBook') }}</h5>
-          
-          <!-- Tombol Baca E-Book -->
-          @if ($loan->book?->read_url)
-            @if ($isAdmin || $loan->status === 'approved')
-              <a href="{{ $loan->book->read_url }}" target="_blank" class="btn btn-primary w-100 mb-3">
-                <i class="bx bx-book-open me-1"></i> {{ __('readBookOnline') }}
-              </a>
-            @else
-              <button class="btn btn-outline-secondary w-100 mb-3" disabled title="{{ __('getApprovalToRead') }}">
-                <i class="bx bx-lock-alt me-1"></i> {{ __('readOnlineLocked') }}
-              </button>
-              <small class="text-muted d-block text-center mb-3">{{ __('getApprovalToRead') }}</small>
-            @endif
-          @else
-            <p class="text-muted small text-center mb-3">{{ __('digitalLinkNotAvailable') }}</p>
-          @endif
-
-          <!-- Tombol Tindakan Admin -->
-          @if ($isAdmin)
-            <hr class="my-3">
+        <!-- Card Aksi -->
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title mb-3">{{ __('actions') }}</h5>
             @if ($loan->status === 'pending')
               <div class="d-flex flex-column gap-2">
-                <form action="{{ route('loans.approve', $loan) }}" method="POST" onsubmit="return confirm('{{ __('approveConfirm') }}')">
+                <form action="{{ route('loans.approve', $loan) }}" method="POST">
                   @csrf
                   @method('PATCH')
                   <button type="submit" class="btn btn-success w-100">
                     <i class="bx bx-check me-1"></i> {{ __('approveLoan') }}
                   </button>
                 </form>
-                <form action="{{ route('loans.reject', $loan) }}" method="POST" onsubmit="return confirm('{{ __('rejectConfirm') }}')">
+                <form action="{{ route('loans.reject', $loan) }}" method="POST">
                   @csrf
                   @method('PATCH')
                   <button type="submit" class="btn btn-danger w-100">
@@ -193,7 +192,7 @@
                 </form>
               </div>
             @elseif ($loan->status === 'approved')
-              <form action="{{ route('loans.return', $loan) }}" method="POST" onsubmit="return confirm('{{ __('borrowConfirm') }}')">
+              <form action="{{ route('loans.return', $loan) }}" method="POST">
                 @csrf
                 @method('PATCH')
                 <button type="submit" class="btn btn-info w-100">
@@ -203,9 +202,9 @@
             @else
               <p class="text-muted text-center mb-0 small">{{ __('transactionCompleted') }}</p>
             @endif
-          @endif
+          </div>
         </div>
       </div>
-    </div>
+    @endif
   </div>
 @endsection

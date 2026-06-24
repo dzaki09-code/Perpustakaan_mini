@@ -67,6 +67,7 @@
             @endif
             <th>{{ __('book') }}</th>
             <th>{{ __('borrowDate') }}</th>
+            <th>{{ __('dueDate') }}</th>
             <th>{{ __('returnDate') }}</th>
             <th>{{ __('status') }}</th>
             <th class="text-center">{{ __('actions') }}</th>
@@ -74,6 +75,11 @@
         </thead>
         <tbody class="table-border-bottom-0">
           @forelse ($loans as $index => $loan)
+            @php
+              $borrowDate = \Carbon\Carbon::parse($loan->borrow_date);
+              $dueDate = $loan->due_date ? \Carbon\Carbon::parse($loan->due_date) : $borrowDate->copy()->addDays(7);
+              $loanDurationDays = $borrowDate->diffInDays($dueDate);
+            @endphp
             <tr>
               <td>{{ $index + 1 }}</td>
               @if ($isAdmin)
@@ -91,9 +97,18 @@
               @endif
               <td>
                 <div class="d-flex align-items-center">
-                  <div class="avatar avatar-sm me-2 bg-light rounded d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                    <i class="bx bx-book text-secondary"></i>
-                  </div>
+                  @if($loan->book?->cover_url)
+                    <img
+                      src="{{ $loan->book->cover_url }}"
+                      alt="{{ $loan->book?->title }}"
+                      class="me-2 rounded border bg-white flex-shrink-0"
+                      style="width: 36px; height: 54px; object-fit: cover;"
+                    >
+                  @else
+                    <div class="me-2 bg-light rounded border d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 54px;">
+                      <i class="bx bx-book text-secondary"></i>
+                    </div>
+                  @endif
                   <div>
                     <span class="fw-semibold d-block text-truncate" style="max-width: 250px;" title="{{ $loan->book?->title }}">
                       {{ $loan->book?->title }}
@@ -102,7 +117,11 @@
                   </div>
                 </div>
               </td>
-              <td>{{ \Carbon\Carbon::parse($loan->borrow_date)->format('d M Y') }}</td>
+              <td>{{ $borrowDate->format('d M Y') }}</td>
+              <td>
+                <span class="fw-semibold">{{ $dueDate->format('d M Y') }}</span>
+                <div class="small text-muted">{{ __('loanDurationDays', ['count' => $loanDurationDays]) }}</div>
+              </td>
               <td>
                 @if ($loan->return_date)
                   {{ \Carbon\Carbon::parse($loan->return_date)->format('d M Y') }}
@@ -137,7 +156,7 @@
             </tr>
           @empty
             <tr>
-              <td colspan="{{ $isAdmin ? 7 : 5 }}" class="text-center py-4 text-muted">Belum ada riwayat peminjaman.</td>
+              <td colspan="{{ $isAdmin ? 8 : 7 }}" class="text-center py-4 text-muted">Belum ada riwayat peminjaman.</td>
             </tr>
           @endforelse
         </tbody>

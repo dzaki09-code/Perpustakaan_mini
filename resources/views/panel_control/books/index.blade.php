@@ -76,8 +76,24 @@
             <tr>
               <td>{{ $books->firstItem() + $index }}</td>
               <td>
-                <strong>{{ $book->title }}</strong>
-                <div class="text-muted small">{{ $book->publisher ?: '-' }}</div>
+                <div class="d-flex align-items-center">
+                  @if($book->cover_url)
+                    <img
+                      src="{{ $book->cover_url }}"
+                      alt="{{ $book->title }}"
+                      class="me-2 rounded border bg-white flex-shrink-0"
+                      style="width: 36px; height: 54px; object-fit: cover;"
+                    >
+                  @else
+                    <div class="me-2 bg-light rounded border d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 54px;">
+                      <i class="bx bx-book text-secondary"></i>
+                    </div>
+                  @endif
+                  <div>
+                    <strong class="d-block text-truncate" style="max-width: 240px;" title="{{ $book->title }}">{{ $book->title }}</strong>
+                    <div class="text-muted small text-truncate" style="max-width: 240px;">{{ $book->author }}</div>
+                  </div>
+                </div>
               </td>
               <td>{{ $book->author }}</td>
               <td>{{ $book->category ?: '-' }}</td>
@@ -88,6 +104,10 @@
                 <td>
                   <div class="d-flex justify-content-end gap-2">
                     @if ($isUser)
+                        <a href="{{ route('books.show', $book) }}" class="btn btn-sm btn-info">
+                            {{ __('detail') }}
+                        </a>
+
                         <form action="{{ route('loans.borrow', $book) }}" method="POST">
                             @csrf
                             <button type="submit" class="btn btn-primary btn-sm">
@@ -105,9 +125,7 @@
                             {{ __('edit') }}
                         </a>
 
-                        <form action="{{ route('books.destroy', $book) }}"
-                            method="POST"
-                            onsubmit="return confirm('{{ __('deleteConfirmBook') }}')">
+                        <form action="{{ route('books.destroy', $book) }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-sm btn-danger">
@@ -125,7 +143,7 @@
             </tr>
           @empty
             <tr>
-              <td colspan="{{ $isAdmin ? 8 : 7 }}" class="text-center py-4 text-muted">{{ __('noDataBooks') }}</td>
+              <td colspan="{{ $isAdmin || $isUser ? 8 : 7 }}" class="text-center py-4 text-muted">{{ __('noDataBooks') }}</td>
             </tr>
           @endforelse
         </tbody>

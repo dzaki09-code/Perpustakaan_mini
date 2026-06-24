@@ -163,9 +163,18 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center">
-                                            <div class="avatar flex-shrink-0 me-2 bg-light rounded d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                                                <i class="bx bx-book text-secondary"></i>
-                                            </div>
+                                            @if($book->cover_url)
+                                                <img
+                                                    src="{{ $book->cover_url }}"
+                                                    alt="{{ $book->title }}"
+                                                    class="me-2 rounded border bg-white flex-shrink-0"
+                                                    style="width: 36px; height: 54px; object-fit: cover;"
+                                                >
+                                            @else
+                                                <div class="me-2 bg-light rounded border d-flex align-items-center justify-content-center flex-shrink-0" style="width: 36px; height: 54px;">
+                                                    <i class="bx bx-book text-secondary"></i>
+                                                </div>
+                                            @endif
                                             <div class="d-inline-block">
                                                 <span class="fw-semibold d-block text-truncate" style="max-width: 180px;" title="{{ $book->title }}">
                                                     {{ $book->title }}

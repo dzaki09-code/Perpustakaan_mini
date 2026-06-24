@@ -35,4 +35,12 @@ return [
         ],
     ],
 
+    'open_library' => [
+        'base_url' => env('OPEN_LIBRARY_BASE_URL', 'https://openlibrary.org'),
+        'cache_ttl' => (int) env('BOOK_API_CACHE_TTL', 3600),
+        'cache_store' => env('BOOK_API_CACHE_STORE', null),
+        'timeout' => (int) env('BOOK_API_TIMEOUT', 10),
+        'verify_ssl' => filter_var(env('BOOK_API_VERIFY_SSL', true), FILTER_VALIDATE_BOOLEAN),
+    ],
+
 ];

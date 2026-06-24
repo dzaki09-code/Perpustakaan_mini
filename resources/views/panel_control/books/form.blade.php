@@ -18,7 +18,7 @@
                 @if ($mode === 'edit')
                     @method('PUT')
                 @endif
-                <input type="hidden" id="read_url" name="read_url" value="{{ old('read_url', $book->read_url) }}" />
+                <input type="hidden" id="cover_url" name="cover_url" value="{{ old('cover_url', $book->cover_url) }}" />
 
                 <div class="row g-3">
                     <div class="col-md-8">
@@ -107,12 +107,9 @@
                 </div>
 
                 <div class="d-flex justify-content-end gap-2 mt-4">
-                    <div>
-                        <a href="{{ route('books.index') }}" class="btn btn-outline-secondary">{{ __('back') }}</a>
-                        <a href="{{ route('books.index') }}" class="btn btn-outline-secondary">{{ __('cancel') }}</a>
-                        <button type="submit"
-                            class="btn btn-primary">{{ $mode === 'edit' ? __('update') : __('save') }}</button>
-                    </div>
+                    <a href="{{ route('books.index') }}" class="btn btn-outline-secondary">{{ __('cancel') }}</a>
+                    <button type="submit" class="btn btn-primary">{{ $mode === 'edit' ? __('update') : __('save') }}</button>
+                </div>
             </form>
         </div>
     </div>
@@ -151,7 +148,7 @@
             const categoryInput = document.getElementById('category');
             const isbnInput = document.getElementById('isbn');
             const descriptionInput = document.getElementById('description');
-            const readUrlInput = document.getElementById('read_url');
+            const coverUrlInput = document.getElementById('cover_url');
 
             if (!lookupButton) {
                 return;
@@ -172,7 +169,7 @@
                     return;
                 }
 
-                statusElement.innerHTML = results.length + ' {{ __('resultsFound', ['count' => '']) }}'.replace(':count', results.length);
+                statusElement.textContent = @json(__('resultsFound')).replace(':count', results.length);
 
                 results.forEach(function(book, index) {
                     const item = document.createElement('div');
@@ -180,6 +177,17 @@
 
                     const row = document.createElement('div');
                     row.className = 'd-flex justify-content-between align-items-start gap-3';
+
+                    if (book.cover_url) {
+                        const cover = document.createElement('img');
+                        cover.src = book.cover_url;
+                        cover.alt = book.title || '{{ __('title') }}';
+                        cover.className = 'rounded border flex-shrink-0';
+                        cover.style.width = '64px';
+                        cover.style.height = '96px';
+                        cover.style.objectFit = 'cover';
+                        row.appendChild(cover);
+                    }
 
                     const content = document.createElement('div');
                     content.className = 'flex-grow-1';
@@ -191,7 +199,7 @@
                     const meta = document.createElement('div');
                     meta.className = 'text-muted small';
                     meta.textContent = [book.author, book.publisher, book.publication_year].filter(
-                        Boolean).join(' • ') || '{{ __('noAdditionalData') }}';
+                        Boolean).join(' - ') || '{{ __('noAdditionalData') }}';
 
                     const details = document.createElement('div');
                     details.className = 'small mt-2';
@@ -218,7 +226,7 @@
                         if (book.category) categoryInput.value = book.category;
                         if (book.isbn) isbnInput.value = book.isbn;
                         if (book.description) descriptionInput.value = book.description;
-                        if (readUrlInput) readUrlInput.value = book.read_url || '';
+                        if (coverUrlInput) coverUrlInput.value = book.cover_url || '';
 
                         modal.hide();
                     });
@@ -271,7 +279,7 @@
 
                     if (!response.ok) {
                         throw new Error(payload.message ||
-                            'Gagal mengambil data dari Project Gutenberg.');
+                            '{{ __('openLibraryFetchFailed') }}');
                     }
 
                     renderResults(payload.results || []);

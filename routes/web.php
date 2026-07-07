@@ -18,7 +18,10 @@ Route::get('lang/{locale}', function ($locale) {
     return redirect()->back();
 });
 
-Route::get('/', [AuthController::class, 'index'])->name('login');
+Route::get('/', function () {
+    return view('panel_control.index');
+})->name('landing');
+Route::get('/login', [AuthController::class, 'index'])->name('login');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/register', [AuthController::class, 'register_process'])->name('signup');
 Route::post('/login', [AuthController::class, 'login'])->name('signin');

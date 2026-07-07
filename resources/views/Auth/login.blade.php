@@ -68,6 +68,9 @@
                                 </ul>
                             </div>
                         </div>
+
+                        
+
                         <h4 class="mb-2 text-center">{{ __('welcome') }}</h4><br>
                         <p class="text-center">{{ __('subtitle') }}</p><br>
 
@@ -114,6 +117,12 @@
                                 <span>{{ __('registerNow') }}</span>
                             </a>
                         </p>
+
+                        <div class="d-flex justify-content-center mb-3">
+                            <a href="{{ route('landing') }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bx bx-arrow-back"></i> Kembali ke Landing Page
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>

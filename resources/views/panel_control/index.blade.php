@@ -619,8 +619,8 @@
           <i class='bx bx-book-open'></i>Perpustakaan Mini
         </a>
         <div class="ms-auto d-flex gap-2 align-items-center">
-          <a href="#" class="btn nav-btn nav-btn-outline d-none d-sm-inline-block">Masuk</a>
-          <a href="#" class="btn nav-btn nav-btn-primary">Daftar</a>
+          <a href="{{ route('login') }}" class="btn nav-btn nav-btn-outline d-none d-sm-inline-block">Masuk</a>
+          <a href="{{ route('register') }}" class="btn nav-btn nav-btn-primary">Daftar</a>
         </div>
       </div>
     </nav>
@@ -644,8 +644,8 @@
               mengakses layanan perpustakaan dengan pengalaman yang lebih cepat, jelas, dan terpercaya.
             </p>
             <div class="d-flex flex-wrap gap-3 mt-4">
-              <a href="#" class="btn nav-btn nav-btn-primary btn-lg">Daftar Sekarang</a>
-              <a href="#" class="btn nav-btn nav-btn-outline btn-lg">Masuk ke Akun</a>
+              <a href="{{ route('register') }}" class="btn nav-btn nav-btn-primary btn-lg">Daftar Sekarang</a>
+              <a href="{{ route('login') }}" class="btn nav-btn nav-btn-outline btn-lg">Masuk ke Akun</a>
             </div>
             <div class="mt-4 d-flex flex-wrap gap-3">
               <span class="badge-pill"><i class='bx bx-time-five'></i> Proses cepat</span>
@@ -887,8 +887,8 @@
               <p class="text-white-50 mb-0">Daftar sekarang untuk mulai mengakses fitur yang memudahkan pelanggan dalam mencari dan meminjam buku.</p>
             </div>
             <div class="col-lg-4 text-lg-end">
-              <a href="#" class="btn cta-btn-light me-2 mb-2">Daftar</a>
-              <a href="#" class="btn cta-btn-outline-light mb-2">Masuk</a>
+              <a href="{{ route('register') }}" class="btn cta-btn-light me-2 mb-2">Daftar</a>
+              <a href="{{ route('login') }}" class="btn cta-btn-outline-light mb-2">Masuk</a>
             </div>
           </div>
         </div>

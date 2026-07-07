@@ -169,6 +169,12 @@
                             <a href="{{ route('login') }}">
                                 <span>{{ __('loginNow') }}</span>
                             </a>
+
+                            <div class="d-flex justify-content-center mb-3">
+                            <a href="{{ route('landing') }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bx bx-arrow-back"></i> Kembali ke Landing Page
+                            </a>
+                        </div>
                         </p>
                     </div>
                 </div>

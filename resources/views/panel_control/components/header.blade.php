@@ -1,7 +1,7 @@
 @php
     $authUser = Auth::user();
     $profilePhotoUrl = $authUser && $authUser->profile_photo_path
-        ? asset('storage/' . $authUser->profile_photo_path)
+        ? Storage::disk('public')->url($authUser->profile_photo_path)
         : null;
 @endphp
 

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
@@ -45,6 +46,8 @@ class ProfileTest extends TestCase
 
     public function test_authenticated_user_can_upload_profile_photo(): void
     {
+        Storage::fake('public');
+
         $user = User::create([
             'name' => 'Member User',
             'email' => 'photo@example.com',
@@ -67,7 +70,7 @@ class ProfileTest extends TestCase
 
         $user->refresh();
         $this->assertNotNull($user->profile_photo_path);
-        $this->assertFileExists(storage_path('app/public/' . $user->profile_photo_path));
+        $this->assertTrue(Storage::disk('public')->exists($user->profile_photo_path));
     }
 }
 

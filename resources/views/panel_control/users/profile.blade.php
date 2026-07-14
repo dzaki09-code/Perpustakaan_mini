@@ -15,13 +15,11 @@
           <div class="dropdown mt-4">
             <button class="btn btn-outline-secondary btn-icon dropdown-toggle p-0 border-0 bg-transparent d-flex align-items-center justify-content-center" type="button" id="profilePhotoMenu" data-bs-toggle="dropdown" aria-expanded="false" style="width: 120px; height: 120px;">
               <div id="photoPreviewContainer" class="rounded-circle border overflow-hidden" style="width: 120px; height: 120px; display: inline-flex; align-items: center; justify-content: center;">
-                @if ($user->profile_photo_path)
-                  <img id="photoPreview" src="{{ Storage::disk('s3')->temporaryUrl($user->profile_photo_path, now()->addMinutes(30)) }}" alt="Foto profil" style="width: 100%; height: 100%; object-fit: cover;">
-                @else
-                  <span id="photoPreview" class="avatar-initial rounded-circle bg-label-primary fs-3 d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
-                    <i class="bx bx-moon"></i>
-                  </span>
-                @endif
+             @if ($user->profile_photo_path)
+          <img id="modalPhotoPreview" src="{{ Storage::disk('public')->url($user->profile_photo_path) }}" alt="Foto profil" class="img-fluid rounded">
+        @else
+          <p class="text-muted">{{ __('noProfilePhoto') }}</p>
+        @endif
               </div>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profilePhotoMenu">
@@ -93,9 +91,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body text-center">
-        @if ($user->profile_photo_path)
-          
-        @else<img id="modalPhotoPreview" src="{{ Storage::disk('s3')->temporaryUrl($user->profile_photo_path, now()->addMinutes(30)) }}" alt="Foto profil" class="img-fluid rounded">
+       @if ($user->profile_photo_path)
+          <img id="modalPhotoPreview" src="{{ Storage::disk('public')->url($user->profile_photo_path) }}" alt="Foto profil" class="img-fluid rounded">
+        @else
           <p class="text-muted">{{ __('noProfilePhoto') }}</p>
         @endif
       </div>

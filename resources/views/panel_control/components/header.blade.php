@@ -1,7 +1,7 @@
 @php
     $authUser = Auth::user();
    $profilePhotoUrl = $authUser && $authUser->profile_photo_path 
-         ? Storage::disk('s3')->temporaryUrl($authUser->profile_photo_path, now()->addMinutes(30))
+        ? Storage::disk('s3')->url($authUser->profile_photo_path)
         : null;
 @endphp
 

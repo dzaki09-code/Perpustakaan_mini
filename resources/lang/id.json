@@ -98,7 +98,9 @@
     "logout": "Keluar",
     "profile": "Profil",
     "account": "Akun",
-    "history": "Riwayat"
+    "history": "Riwayat",
+    "viewProfilePhoto": "Lihat Foto Profil",
+    "importProfilePhoto": "Impor Foto Profil"
     ,
     "english": "English",
     "indonesian": "Bahasa Indonesia",

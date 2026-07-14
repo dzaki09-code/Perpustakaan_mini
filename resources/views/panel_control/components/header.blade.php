@@ -1,3 +1,10 @@
+@php
+    $authUser = Auth::user();
+    $profilePhotoUrl = $authUser && $authUser->profile_photo_path
+        ? asset('storage/' . $authUser->profile_photo_path)
+        : null;
+@endphp
+
 <!-- Top Navbar -->
 <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
     id="layout-navbar">
@@ -33,9 +40,13 @@
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
-                        <span class="avatar-initial rounded-circle bg-label-primary">
-                            <i class="bx bx-user"></i>
-                        </span>
+                        @if ($profilePhotoUrl)
+                            <img src="{{ $profilePhotoUrl }}?t={{ now()->timestamp }}" alt="Profile" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                        @else
+                            <span class="avatar-initial rounded-circle bg-label-primary">
+                                <i class="bx bx-user"></i>
+                            </span>
+                        @endif
                     </div>
                 </a>
 
@@ -43,13 +54,17 @@
                 <ul class="dropdown-menu dropdown-menu-end">
                     <!-- User Profile Card -->
                     <li>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar avatar-online">
-                                        <span class="avatar-initial rounded-circle bg-label-primary">
-                                            <i class="bx bx-user"></i>
-                                        </span>
+                                        @if ($profilePhotoUrl)
+                                            <img src="{{ $profilePhotoUrl }}?t={{ now()->timestamp }}" alt="Profile" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                        @else
+                                            <span class="avatar-initial rounded-circle bg-label-primary">
+                                                <i class="bx bx-user"></i>
+                                            </span>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
@@ -64,7 +79,12 @@
                         <div class="dropdown-divider"></div>
                     </li>
 
-                
+                    <li>
+                        <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                            <i class="bx bx-user-circle me-2"></i>
+                            <span class="align-middle">{{ __('myProfile') }}</span>
+                        </a>
+                    </li>
 
                     <!-- Logout -->
                     <li>

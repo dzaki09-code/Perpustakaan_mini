@@ -29,6 +29,9 @@ Route::post('/login', [AuthController::class, 'login'])->name('signin');
 Route::middleware('auth')->group(function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('signout');
 
+    Route::get('/profile/edit', [UserController::class, 'editProfile'])->name('profile.edit');
+    Route::put('/profile', [UserController::class, 'updateProfile'])->name('profile.update');
+
     // Routing untuk Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

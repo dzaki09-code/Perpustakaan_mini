@@ -5,6 +5,7 @@ namespace App\Http\Controllers\PanelControl;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -26,6 +27,55 @@ class UserController extends Controller
             ->withQueryString();
 
         return view('panel_control.users.index', compact('users'));
+    }
+
+    public function editProfile(Request $request)
+    {
+        $user = $request->user();
+
+        return view('panel_control.users.profile', compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = $request->user();
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id],
+            'password' => ['nullable', 'confirmed', 'min:8'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Email tidak valid.',
+            'email.unique' => 'Email sudah digunakan.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'password.min' => 'Password minimal 8 karakter.',
+            'photo.image' => 'File foto harus berupa gambar.',
+            'photo.mimes' => 'Format foto harus jpg, jpeg, png, atau webp.',
+            'photo.max' => 'Ukuran foto maksimal 2 MB.',
+        ]);
+
+        if (empty($validated['password'])) {
+            unset($validated['password']);
+        }
+
+        if ($request->hasFile('photo')) {
+            if ($user->profile_photo_path && Storage::disk('public')->exists($user->profile_photo_path)) {
+                Storage::disk('public')->delete($user->profile_photo_path);
+            }
+
+            $path = $request->file('photo')->store('profile-photos', 'public');
+            $user->profile_photo_path = $path;
+        }
+
+        $user->fill($validated);
+        $user->save();
+
+        return redirect()
+            ->route('profile.edit')
+            ->with('success', 'Profil berhasil diperbarui.');
     }
 
     public function updateStatus(Request $request, User $user)

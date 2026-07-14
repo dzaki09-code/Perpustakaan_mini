@@ -88,6 +88,13 @@
       </li>
     @endif
 
+    <li class="menu-item {{ Route::is('profile.*') ? 'active' : '' }}">
+      <a href="{{ route('profile.edit') }}" class="menu-link">
+        <i class="menu-icon tf-icons bx bx-user-circle"></i>
+        <div>{{ __('myProfile') }}</div>
+      </a>
+    </li>
+
     @if ($isAdmin)
       <!-- Pengguna -->
       <li class="menu-item {{ Route::is('users.*') ? 'active open' : '' }}">

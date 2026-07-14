@@ -100,7 +100,9 @@
     ,
     "profile": "Profile",
     "account": "Account",
-    "history": "History"
+    "history": "History",
+    "viewProfilePhoto": "View Profile Photo",
+    "importProfilePhoto": "Import Profile Photo"
     ,
     "english": "English",
     "indonesian": "Bahasa Indonesia",
